@@ -1,6 +1,3 @@
-# Arlo
-Arlo.SerialCommunication - contains C# program with comments, runs on your machine.
-Arlo.SerialCommunication.SimpleIDE.c - contains C program, should be installed on the robot. 
-After serial command "exit" it sends sensors' readings.
-
-Contact: Maciej Janowski, maciejanowski@gmail.com
+# Using deep neural networks to recognize hand gestures to control a mobile robot using a camera.
+Desktop aplication written in python 3 using Deep neural networks will calculate commands such as ride forward, turn right and send via wifi to mobile robot. Alro will execute command. </br>
+Arlo: https://www.parallax.com/product/arlo-robotic-platform-system
