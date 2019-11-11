@@ -2,3 +2,4 @@
 tmp/nanoc/
 materialy
 python/libtorch
+python/MNIST

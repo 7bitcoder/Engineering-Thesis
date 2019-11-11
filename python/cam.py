@@ -1,7 +1,3 @@
-from __future__ import print_function
-import numpy as np
-import torch
-from torchvision import transforms, datasets
 import cv2
 
 cv2.namedWindow("preview")
