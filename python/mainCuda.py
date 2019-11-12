@@ -31,7 +31,7 @@ class DogsVSCats():
                         path = os.path.join(label, f)
                         img = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
                         img = cv2.resize(img, (self.IMG_SIZE, self.IMG_SIZE))
-                        self.training_data.append([np.array(img), np.eye(2)[self.LABELS[label]]])  # do something like print(np.eye(2)[1]), just makes one_hot
+                        self.training_data.append([np.array(img), np.eye(2)[self.LABELS[label]]])
                         #print(np.eye(2)[self.LABELS[label]])
 
                         if label == self.CATS:
@@ -80,6 +80,13 @@ class Net(nn.Module):
         return F.softmax(x, dim=1)
 
 
+if REBUILD_DATA:
+    dogsvcats = DogsVSCats()
+    dogsvcats.make_training_data()
+
+training_data = np.load("training_data.npy", allow_pickle=True)
+print(len(training_data))
+
 
 if torch.cuda.is_available():
     device = torch.device("cuda:0")  # you can continue going on here, like cuda:1 cuda:2....etc.
@@ -87,14 +94,6 @@ if torch.cuda.is_available():
 else:
     device = torch.device("cpu")
     print("Running on the CPU")
-
-
-if REBUILD_DATA:
-    dogsvcats = DogsVSCats()
-    dogsvcats.make_training_data()
-
-training_data = np.load("training_data.npy", allow_pickle=True)
-print(len(training_data))
 
 
 
@@ -115,10 +114,12 @@ test_y = y[-val_size:]
 print(len(train_X))
 print(len(test_X))
 
+
 def test(size=32):
     X, y = test_X[:size], test_y[:size]
     val_acc, val_loss = fwd_pass(X.view(-1, 1, 50, 50).to(device), y.to(device))
     return val_acc, val_loss
+
 
 def batch_test(net):
     BATCH_SIZE = 100
@@ -140,6 +141,7 @@ def batch_test(net):
         acc = matches.count(True)/len(matches)
 
         print("Test Accuracy:", round(acc, 3))
+
 
 def fwd_pass(X, y, train=False):
 
@@ -184,5 +186,8 @@ def train(net):
                 if i % 50 == 0:
                     val_acc, val_loss = test(size=100)
                     #print(val_acc, float(val_loss))
+                    #
                     f.write(f"{MODEL_NAME},{round(time.time(),3)},{round(float(acc),2)},{round(float(loss), 4)},{round(float(val_acc),2)},{round(float(val_loss),4)},{epoch}\n")
+
+
 train(net)
