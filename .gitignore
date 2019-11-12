@@ -3,3 +3,6 @@ tmp/nanoc/
 materialy
 python/libtorch
 python/MNIST
+python/PetImages
+python/training_data.npy
+python/data
