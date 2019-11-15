@@ -10,7 +10,7 @@ import time
 
 
 REBUILD_DATA = False # set to true to one once, then back to false unless you want to change something in your training data.
-
+#image added
 class DogsVSCats():
     IMG_SIZE = 50
     CATS = "PetImages/Cat"
