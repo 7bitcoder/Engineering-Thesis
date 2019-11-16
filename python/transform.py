@@ -77,3 +77,18 @@ class ToTensor(object):
         image = image.transpose((2, 0, 1))
         return {'image': torch.from_numpy(image),
                 'landmarks': torch.from_numpy(landmarks)}
+
+
+def transformData():
+    import os
+    import glob
+    import re
+    import copy
+    splitter = r'kinect_leap_dataset/**/10_rgb*'
+    pathsList = glob.glob(splitter, recursive=True)
+    for path in pathsList:
+        old = copy.deepcopy(path)
+        ten = '10'
+        new = (path[::-1].replace(ten[::-1], '0', 1))[::-1]
+        print(new)
+        os.rename(old,new)
