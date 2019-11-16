@@ -4,26 +4,26 @@ import torch
 
 
 class Net(nn.Module):
-    def __init__(self):
+    def __init__(self, size):
         super().__init__()
         self.conv1 = nn.Conv2d(1, 32, 5)
         self.conv2 = nn.Conv2d(32, 64, 5)
         self.conv3 = nn.Conv2d(64, 128, 5)
 
-        x = torch.randn(50,50).view(-1,1,50,50)
+        x = torch.randn(size, size).view(-1, 1, size, size)
         self._to_linear = None
         self.convs(x)
 
         self.fc1 = nn.Linear(self._to_linear, 512)
-        self.fc2 = nn.Linear(512, 2)
+        self.fc2 = nn.Linear(512, 10)
 
     def convs(self, x):
-        x = F.max_pool2d(F.relu(self.conv1(x)), (2,2))
-        x = F.max_pool2d(F.relu(self.conv2(x)), (2,2))
-        x = F.max_pool2d(F.relu(self.conv3(x)), (2,2))
+        x = F.max_pool2d(F.relu(self.conv1(x)), (2, 2))
+        x = F.max_pool2d(F.relu(self.conv2(x)), (2, 2))
+        x = F.max_pool2d(F.relu(self.conv3(x)), (2, 2))
 
         if self._to_linear is None:
-            self._to_linear = x[0].shape[0]*x[0].shape[1]*x[0].shape[2]
+            self._to_linear = x[0].shape[0] * x[0].shape[1] * x[0].shape[2]
         return x
 
     def forward(self, x):

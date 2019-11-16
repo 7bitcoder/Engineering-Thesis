@@ -4,6 +4,7 @@ import torchvision.transforms as transforms
 import glob
 import re
 import cv2
+import numpy as np
 
 class KinectDataset(Dataset):
     """hand symbols dataset."""
@@ -32,9 +33,10 @@ class KinectDataset(Dataset):
         path = self.pathsList[idx]
         image = cv2.imread(path)
         label = int(re.findall(r'G\d', path)[0][1:])
+        label = np.eye(10)[label]
         if self.transform:
             image = self.transform(image)
-        return (image, label)
+        return (image, torch.tensor(label,dtype = torch.float))
 
 
 if __name__ == "__main__":
@@ -56,7 +58,7 @@ if __name__ == "__main__":
 
 
     testLoader = torch.utils.data.DataLoader(testDataset,
-                                                 batch_size=4, shuffle=True,
+                                                 batch_size=4, shuffle=False,
                                                  num_workers=4)
 
     trainLoader = torch.utils.data.DataLoader(trainDataset,
