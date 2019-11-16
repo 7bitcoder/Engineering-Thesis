@@ -40,10 +40,12 @@ class KinectDataset(Dataset):
 if __name__ == "__main__":
     #test
     split = 2
+    import openCvTranforms.opencv_transforms.transforms as tf
     transform = transforms.Compose(
-        [transforms.Resize(256),
-         transforms.ToTensor(),
-         transforms.Normalize((0.5,), (0.5,))])
+        [tf.Resize((256,256)),
+         tf.Grayscale(),
+         tf.ToTensor(),
+         tf.Normalize((0.5,), (0.5,))])
 
     testDataset = KinectDataset("kinect_leap_dataset/", split, test=True, transform=transform)
     trainDataset = KinectDataset("kinect_leap_dataset/", split, test=False, transform=transform)
@@ -63,5 +65,6 @@ if __name__ == "__main__":
 
     dataiter = iter(testLoader)
     image, label = dataiter.next()
+    print(image.shape)
     print(image)
     print(label)

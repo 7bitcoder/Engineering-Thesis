@@ -1,0 +1,3 @@
+[submodule "python/openCvTranforms"]
+	path = python/openCvTranforms
+	url = https://github.com/jbohnslav/opencv_transforms.git
