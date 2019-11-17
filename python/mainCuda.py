@@ -17,10 +17,11 @@ else:
     print("Running on the CPU")
 
 split = 2
-size = 256
+width = 160
+heigh = 120
 
 transform = transforms.Compose(
-    [tf.Resize((size, size)),
+    [tf.Scale((heigh, width)),
      tf.Grayscale(),
      tf.ToTensor(),
      tf.Normalize((0.5,), (0.5,))])
@@ -31,10 +32,10 @@ print(len(test))
 print(len(train))
 
 testDataset = torch.utils.data.DataLoader(test,
-                                          batch_size=4, shuffle=False)
+                                          batch_size=16, shuffle=False)
 
 trainDataset = torch.utils.data.DataLoader(train,
-                                           batch_size=4, shuffle=True)
+                                           batch_size=16, shuffle=True)
 
 print(len(testDataset))
 print(len(trainDataset))
@@ -48,7 +49,7 @@ def imshow(img):
 
 
 MODEL_NAME = f"model-{int(time.time())}"  # gives a dynamic model name, to just help with things getting messy over time.
-net = Net(size).to(device)
+net = Net(width, heigh).to(device)
 optimizer = optim.Adam(net.parameters(), lr=0.001)
 loss_function = nn.MSELoss()
 
@@ -58,7 +59,7 @@ print("Model name: " + MODEL_NAME)
 def test(length=32):
     for i, data in enumerate(testDataset, len(testDataset) - length):
         image, label = data
-        val_acc, val_loss = fwd_pass(image.view(-1, 1, size, size).to(device), label.to(device))
+        val_acc, val_loss = fwd_pass(image.view(-1, 1, heigh, width).to(device), label.to(device))
     return val_acc, val_loss
 
 
@@ -82,7 +83,7 @@ def fwd_pass(images, labels, train=False):
 
 def train(net):
     BATCH_SIZE = 100
-    EPOCHS = 2
+    EPOCHS = 15
 
     with open("model.log", "w") as f:
         for epoch in range(EPOCHS):
@@ -93,7 +94,7 @@ def train(net):
             for data in trainDataset:
                 t.update(1)
                 images, labels = data
-                images = images.view(-1, 1, size, size)
+                images = images.view(-1, 1, heigh, width)
                 images, labels = images.to(device), labels.to(device)
 
                 acc, loss = fwd_pass(images, labels, train=True)
@@ -101,13 +102,17 @@ def train(net):
                 # print(f"Acc: {round(float(acc),2)}  Loss: {round(float(loss),4)}")
                 # f.write(f"{MODEL_NAME},{round(time.time(),3)},train,{round(float(acc),2)},{round(float(loss),4)}\n")
                 # just to show the above working, and then get out:
-                if i % 51 == 50:
-                    val_acc, val_loss = test(length=100)
-                    #print(val_acc, float(val_loss))
+                if i % 10 == 9:
+                    val_acc, val_loss = test(length=10)
+                    # print(val_acc, float(val_loss))
                     f.write(
-                        f"{MODEL_NAME},{round(time.time(), 3)},{round(float(acc), 3},{round(float(loss), 4)},{round(float(val_acc), 3)},{round(float(val_loss), 4)},{epoch}\n")
+                        f"{MODEL_NAME},{round(time.time(), 3)},{round(float(acc), 3)}, {round(float(loss), 4)}, {round(float(val_acc), 3)}, {round(float(val_loss), 4)}, {epoch}\n")
                 i += 1
+            key = cv2.waitKey(1)
+            if key == 27:  # exit on ESC
+                break;
             t.close()
 
 
 train(net)
+torch.save(net, "./savedModel.pth")
