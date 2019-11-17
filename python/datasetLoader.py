@@ -22,7 +22,6 @@ class KinectDataset(Dataset):
         else:
             splitter = '**/*[0-' + str(split - 1) + ']_rgb.png'
         self.pathsList = glob.glob(self.dir + splitter, recursive=True)
-        print(self.pathsList)
 
     def __len__(self):
         return len(self.pathsList)

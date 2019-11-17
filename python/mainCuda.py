@@ -8,37 +8,15 @@ import torch.nn as nn
 from datasetLoader import *
 import openCvTranforms.opencv_transforms.transforms as tf
 import torchvision.transforms as transforms
+import keyboard
 
 if torch.cuda.is_available():
     device = torch.device("cuda:0")  # you can continue going on here, like cuda:1 cuda:2....etc.
+    print('Available gpu\'s: '+ str(torch.cuda.device_count()))
     print("Running on the GPU")
 else:
     device = torch.device("cpu")
     print("Running on the CPU")
-
-split = 2
-width = 160
-heigh = 120
-
-transform = transforms.Compose(
-    [tf.Scale((heigh, width)),
-     tf.Grayscale(),
-     tf.ToTensor(),
-     tf.Normalize((0.5,), (0.5,))])
-
-test = KinectDataset("kinect_leap_dataset/", split, test=True, transform=transform)
-train = KinectDataset("kinect_leap_dataset/", split, test=False, transform=transform)
-print(len(test))
-print(len(train))
-
-testDataset = torch.utils.data.DataLoader(test,
-                                          batch_size=16, shuffle=False)
-
-trainDataset = torch.utils.data.DataLoader(train,
-                                           batch_size=16, shuffle=True)
-
-print(len(testDataset))
-print(len(trainDataset))
 
 
 # plot image with opencv
@@ -46,14 +24,6 @@ def imshow(img):
     img = img / 2 + 0.5  # unnormalize
     npimg = img.numpy()
     cv2.imshow(np.transpose(npimg, (1, 2, 0)))
-
-
-MODEL_NAME = f"model-{int(time.time())}"  # gives a dynamic model name, to just help with things getting messy over time.
-net = Net(width, heigh).to(device)
-optimizer = optim.Adam(net.parameters(), lr=0.001)
-loss_function = nn.MSELoss()
-
-print("Model name: " + MODEL_NAME)
 
 
 def test(length=32):
@@ -81,17 +51,24 @@ def fwd_pass(images, labels, train=False):
     return acc, loss
 
 
-def train(net):
-    BATCH_SIZE = 100
-    EPOCHS = 15
+def train(net, epochs, startingEpoch):
+    EPOCHS = epochs
+    #if it is already trained
+    if startEpoch > epochs:
+        return epochs + 1
 
-    with open("model.log", "w") as f:
-        for epoch in range(EPOCHS):
+    with open(logFile, "a") as f:
+        for epoch in range(startingEpoch, EPOCHS):
             print("epoch: " + str(epoch))
             running_loss = 0.0
             i = 0
+            exit = False
             t = tqdm(total=len(trainDataset))  # Initialise
             for data in trainDataset:
+
+                if keyboard.is_pressed('q'):  # exit on ESC
+                    exit = True
+                    print('After this epoch training will end')
                 t.update(1)
                 images, labels = data
                 images = images.view(-1, 1, heigh, width)
@@ -99,20 +76,77 @@ def train(net):
 
                 acc, loss = fwd_pass(images, labels, train=True)
 
-                # print(f"Acc: {round(float(acc),2)}  Loss: {round(float(loss),4)}")
-                # f.write(f"{MODEL_NAME},{round(time.time(),3)},train,{round(float(acc),2)},{round(float(loss),4)}\n")
-                # just to show the above working, and then get out:
                 if i % 10 == 9:
                     val_acc, val_loss = test(length=10)
                     # print(val_acc, float(val_loss))
                     f.write(
                         f"{MODEL_NAME},{round(time.time(), 3)},{round(float(acc), 3)}, {round(float(loss), 4)}, {round(float(val_acc), 3)}, {round(float(val_loss), 4)}, {epoch}\n")
                 i += 1
-            key = cv2.waitKey(1)
-            if key == 27:  # exit on ESC
-                break;
             t.close()
+            if exit:
+                return epoch + 1
 
 
-train(net)
-torch.save(net, "./savedModel.pth")
+if __name__ == "__main__":
+    # split data to test/train 0-9
+    trainStateFilename = "./savedTrainState.pth"
+    modelFilename = "./savedModel.pth"
+    dataSetPath = "kinect_leap_dataset/"
+    logFile = 'model1.log'
+    loadTrainData = True
+    split = 2
+    width = 160
+    heigh = 120
+    epochs = 30
+    batchSize = 16
+    startEpoch = 0
+
+    transform = transforms.Compose(
+        [tf.Scale((heigh, width)),
+         tf.Grayscale(),
+         tf.ToTensor(),
+         tf.Normalize((0.5,), (0.5,))])
+
+    testLoader = KinectDataset(dataSetPath, split, test=True, transform=transform)
+    trainLoader = KinectDataset(dataSetPath, split, test=False, transform=transform)
+
+    testDataset = torch.utils.data.DataLoader(testLoader,
+                                              batch_size=batchSize, shuffle=False)
+
+    trainDataset = torch.utils.data.DataLoader(trainLoader,
+                                               batch_size=batchSize, shuffle=True)
+
+    net = Net(width, heigh).to(device)
+    optimizer = optim.Adam(net.parameters(), lr=0.001)
+
+    if loadTrainData:
+        print('Loading saved Training State')
+        state = torch.load(trainStateFilename)
+        if [epochs, split, width, heigh] != [state['epoch'], state['split'], state['width'], state['height']]:
+            raise Exception('Load Training data differ from actual')
+        startEpoch = state['startEpoch']
+        logFile = state['logFile']
+        batchSize = state['batchSize']
+        net.load_state_dict(state['state_dict'])
+        optimizer.load_state_dict(state['optimizer'])
+        print('Data loaded: starting epoch: ' + str(startEpoch) + ' log File: ' + str(logFile) + ' batch size: ' + str(batchSize))
+    loss_function = nn.MSELoss()
+    MODEL_NAME = f"model-{int(time.time())}"  # gives a dynamic model name, to just help with things getting messy over time.
+
+    print("Model name: " + MODEL_NAME)
+    print("test dataset size: " + str(len(testDataset)) + " train dataset size: " + str(len(trainDataset)))
+    startEpoch = train(net, epochs, startEpoch)
+    state = {
+        'logFile': logFile,
+        'epoch': epochs,
+        'startEpoch': startEpoch,
+        'split': split,
+        'width': width,
+        'height': heigh,
+        'batchSize': batchSize,
+        'state_dict': net.state_dict(),
+        'optimizer': optimizer.state_dict(),
+    }
+    torch.save(state, trainStateFilename)
+    net.to("cpu")
+    torch.save(net, modelFilename)
