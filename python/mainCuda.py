@@ -27,10 +27,15 @@ def imshow(img):
 
 
 def test(length=32):
-    for i, data in enumerate(testDataset, len(testDataset) - length):
+    val_acc = val_loss = 0
+    for i, data in enumerate(testDataset):
         image, label = data
-        val_acc, val_loss = fwd_pass(image.view(-1, 1, heigh, width).to(device), label.to(device))
-    return val_acc, val_loss
+        out = fwd_pass(image.view(-1, 1, heigh, width).to(device), label.to(device))
+        val_acc += out[0]
+        val_loss += out[1]
+        if i == length:
+            break
+    return val_acc/length, val_loss/length
 
 
 def fwd_pass(images, labels, train=False):
@@ -59,7 +64,7 @@ def train(net, epochs, startingEpoch):
 
     with open(logFile, "a") as f:
         for epoch in range(startingEpoch, EPOCHS):
-            print("epoch: " + str(epoch))
+            print("\aepoch: " + str(epoch))
             running_loss = 0.0
             i = 0
             exit = False
@@ -68,7 +73,7 @@ def train(net, epochs, startingEpoch):
 
                 if keyboard.is_pressed('q'):  # exit on ESC
                     exit = True
-                    print('After this epoch training will end')
+                    print('\aAfter this epoch training will end')
                 t.update(1)
                 images, labels = data
                 images = images.view(-1, 1, heigh, width)
@@ -76,8 +81,8 @@ def train(net, epochs, startingEpoch):
 
                 acc, loss = fwd_pass(images, labels, train=True)
 
-                if i % 10 == 9:
-                    val_acc, val_loss = test(length=10)
+                if i % 200 == 199:
+                    val_acc, val_loss = test()
                     # print(val_acc, float(val_loss))
                     f.write(
                         f"{MODEL_NAME},{round(time.time(), 3)},{round(float(acc), 3)}, {round(float(loss), 4)}, {round(float(val_acc), 3)}, {round(float(val_loss), 4)}, {epoch}\n")
@@ -89,16 +94,16 @@ def train(net, epochs, startingEpoch):
 
 if __name__ == "__main__":
     # split data to test/train 0-9
-    trainStateFilename = "./savedTrainState.pth"
-    modelFilename = "./savedModel.pth"
-    dataSetPath = "kinect_leap_dataset/"
-    logFile = 'model1.log'
-    loadTrainData = True
-    split = 2
-    width = 160
-    heigh = 120
+    trainStateFilename = "./savedTrainState2.pth"
+    modelFilename = "./savedMode2.pth"
+    dataSetPath = "laRED_dataset/"
+    logFile = 'model2.log'
+    loadTrainData = False
+    split = 1
+    width = 80
+    heigh = 60
     epochs = 30
-    batchSize = 16
+    batchSize = 32
     startEpoch = 0
 
     transform = transforms.Compose(
@@ -107,8 +112,8 @@ if __name__ == "__main__":
          tf.ToTensor(),
          tf.Normalize((0.5,), (0.5,))])
 
-    testLoader = KinectDataset(dataSetPath, split, test=True, transform=transform)
-    trainLoader = KinectDataset(dataSetPath, split, test=False, transform=transform)
+    testLoader = LaRED(dataSetPath, split, test=True, transform=transform)
+    trainLoader = LaRED(dataSetPath, split, test=False, transform=transform)
 
     testDataset = torch.utils.data.DataLoader(testLoader,
                                               batch_size=batchSize, shuffle=False)

@@ -1,3 +1,6 @@
 [submodule "python/openCvTranforms"]
 	path = python/openCvTranforms
 	url = https://github.com/jbohnslav/opencv_transforms.git
+[submodule "python/btle"]
+	path = python/btle
+	url = https://github.com/hbldh/bleak.git

@@ -70,7 +70,7 @@ class Net(nn.Module):
         self.linearInput = 64 * int(width) * int(heigh);
 
         self.fc1 = nn.Linear(self.linearInput, 256)
-        self.fc2 = nn.Linear(256, 10)
+        self.fc2 = nn.Linear(256, 27)
 
     def convs(self, x):
         x = self.conv1(x)

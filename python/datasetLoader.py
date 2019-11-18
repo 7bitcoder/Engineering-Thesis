@@ -39,34 +39,79 @@ class KinectDataset(Dataset):
         return (image, torch.tensor(label, dtype=torch.float))
 
 
+class LaRED(Dataset):
+    """hand symbols dataset."""
+
+    def __init__(self, dir, split, test=False, transform=None):
+        """
+            dir - directory to dataset
+        """
+        self.dir = dir
+        self.transform = transform
+        splitter = ""
+        if (not test):
+            splitter = '**/O001/*[' + str(split + 1) + '-9].jpg'
+        else:
+            splitter = '**/O001/*[0-' + str(split) + '].jpg'
+        self.pathsList = glob.glob(self.dir + splitter, recursive=True)
+
+    def __len__(self):
+        return len(self.pathsList)
+
+    def __getitem__(self, idx):
+        if torch.is_tensor(idx):
+            idx = idx.tolist()
+
+        path = self.pathsList[idx]
+        image = cv2.imread(path)
+        nmb = int(re.findall(r'G\d\d\d', path)[0][1:])
+        label = np.zeros(27)
+        label[nmb] = 1
+        if self.transform:
+            image = self.transform(image)
+        return (image, torch.tensor(label, dtype=torch.float))
+
+
 if __name__ == "__main__":
     # test
     split = 2
     import openCvTranforms.opencv_transforms.transforms as tf
 
+    heigh = 60
+    width = 80
+
+
+    def imshow(img):
+        img = img.view(heigh, width, 1).numpy() / 2 + 0.5  # unnormalize
+        print(img.shape)
+        # npimg = img.numpy()
+        cv2.imshow("preview", img)
+
     transform = transforms.Compose(
-        [tf.Resize((256, 256)),
+        [tf.Resize((heigh, width)),
          tf.Grayscale(),
          tf.ToTensor(),
          tf.Normalize((0.5,), (0.5,))])
 
-    testDataset = KinectDataset("kinect_leap_dataset/", split, test=True, transform=transform)
-    trainDataset = KinectDataset("kinect_leap_dataset/", split, test=False, transform=transform)
+    testDataset = LaRED("laRED_dataset/", split, test=True, transform=transform)
+    trainDataset = LaRED("laRED_dataset/", split, test=False, transform=transform)
     print(len(testDataset))
     print(len(trainDataset))
     # for idx in range(len(dat)):
     #   print(dat.__getitem__(idx))
 
     testLoader = torch.utils.data.DataLoader(testDataset,
-                                             batch_size=4, shuffle=False,
+                                             batch_size=1, shuffle=False,
                                              num_workers=4)
 
     trainLoader = torch.utils.data.DataLoader(trainDataset,
-                                              batch_size=4, shuffle=True,
+                                              batch_size=1, shuffle=True,
                                               num_workers=4)
 
     dataiter = iter(testLoader)
     image, label = dataiter.next()
+    imshow(image)
+    cv2.waitKey(0)
     print(image.shape)
     print(image)
     print(label)

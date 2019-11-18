@@ -2,13 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="615a3f95-0aa8-4c67-870f-1878902a0950" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/resultsPresentation.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/comunication.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.gitmodules" beforeDir="false" afterPath="$PROJECT_DIR$/../.gitmodules" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cam.py" beforeDir="false" afterPath="$PROJECT_DIR$/cam.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/datasetLoader.py" beforeDir="false" afterPath="$PROJECT_DIR$/datasetLoader.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/mainCuda.py" beforeDir="false" afterPath="$PROJECT_DIR$/mainCuda.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model.log" beforeDir="false" afterPath="$PROJECT_DIR$/model.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/savedModel.pth" beforeDir="false" afterPath="$PROJECT_DIR$/savedModel.pth" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/neuralNetwork.py" beforeDir="false" afterPath="$PROJECT_DIR$/neuralNetwork.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resultsPresentation.py" beforeDir="false" afterPath="$PROJECT_DIR$/resultsPresentation.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -44,8 +46,8 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.resultsPresentation">
-    <configuration name="cam" type="PythonConfigurationType" factoryName="Python" temporary="true">
+  <component name="RunManager" selected="Python.comunication">
+    <configuration name="comunication" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="python" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -57,7 +59,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/cam.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/comunication.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -152,10 +154,10 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.resultsPresentation" />
+        <item itemvalue="Python.comunication" />
         <item itemvalue="Python.main" />
+        <item itemvalue="Python.resultsPresentation" />
         <item itemvalue="Python.mainCuda" />
-        <item itemvalue="Python.cam" />
         <item itemvalue="Python.datasetLoader" />
       </list>
     </recent_temporary>
@@ -190,49 +192,34 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/datasetLoader.py</url>
-          <line>66</line>
-          <option name="timeStamp" value="14" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/datasetLoader.py</url>
-          <line>68</line>
-          <option name="timeStamp" value="15" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/datasetLoader.py</url>
-          <line>67</line>
-          <option name="timeStamp" value="16" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/cam.py</url>
-          <line>26</line>
-          <option name="timeStamp" value="40" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/cam.py</url>
-          <line>21</line>
-          <option name="timeStamp" value="46" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/mainCuda.py</url>
-          <line>86</line>
+          <line>91</line>
           <option name="timeStamp" value="49" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/mainCuda.py</url>
-          <line>96</line>
-          <option name="timeStamp" value="51" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/mainCuda.py</url>
-          <line>60</line>
-          <option name="timeStamp" value="52" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/resultsPresentation.py</url>
           <line>38</line>
           <option name="timeStamp" value="57" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/cam.py</url>
+          <line>31</line>
+          <option name="timeStamp" value="58" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/datasetLoader.py</url>
+          <line>84</line>
+          <option name="timeStamp" value="60" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/datasetLoader.py</url>
+          <line>112</line>
+          <option name="timeStamp" value="62" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/neuralNetwork.py</url>
+          <line>90</line>
+          <option name="timeStamp" value="66" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
