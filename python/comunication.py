@@ -1,8 +1,10 @@
-# simple inquiry example
-import bluetooth
+import asyncio
+from bleak import discover
 
-nearby_devices = bluetooth.discover_devices(lookup_names=True)
-print("Found {} devices.".format(len(nearby_devices)))
+async def run():
+    devices = await discover()
+    for d in devices:
+        print(d)
 
-for addr, name in nearby_devices:
-    print("  {} - {}".format(addr, name))
+loop = asyncio.get_event_loop()
+loop.run_until_complete(run())
