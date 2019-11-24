@@ -1,0 +1,8 @@
+obrazki
+https://commons.wikimedia.org/wiki/File:Neuron-figure_PL.svg neuron
+https://commons.wikimedia.org/wiki/File:Neuron_Hand-tuned.svg neuron2
+https://commons.wikimedia.org/wiki/File:Neuron_McCullocha-Pittsa.svg modelmatematyczny neuronu
+ksi¹¿ka o sieciach
+Ÿród³a https://books.google.pl/books?id=RTtvUVU_xL4C&printsec=frontcover&dq=neural+network&hl=pl&sa=X&ved=0ahUKEwiytpiFjYHmAhWns4sKHZAqBrsQ6AEIKTAA#v=onepage&q=convolutional&f=false 
+https://books.google.pl/books?hl=pl&lr=&id=03DfRqUrTwsC&oi=fnd&pg=PA1&dq=kinds+of+neural+networks&ots=ftTs9vTRJm&sig=x4pAskSpOFLF8VncsTZ__7hQoVQ&redir_esc=y#v=onepage&q=perceptron&f=false
+https://books.google.pl/books?id=LX4_CgAAQBAJ&pg=PA95&dq=rodzaje+sieci+neuronowych&hl=pl&sa=X&ved=0ahUKEwi7q_uY5ILmAhUOx4sKHVZoCQEQ6AEIKTAA#v=onepage&q=perceptron&f=false
