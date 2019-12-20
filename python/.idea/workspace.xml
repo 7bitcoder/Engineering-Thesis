@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="615a3f95-0aa8-4c67-870f-1878902a0950" name="Default Changelist" comment="" />
+    <list default="true" id="615a3f95-0aa8-4c67-870f-1878902a0950" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BleComunicator/.vs/BleComunicator/DesignTimeBuild/.dtbcache" beforeDir="false" afterPath="$PROJECT_DIR$/BleComunicator/.vs/BleComunicator/DesignTimeBuild/.dtbcache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BleComunicator/.vs/BleComunicator/v16/.suo" beforeDir="false" afterPath="$PROJECT_DIR$/BleComunicator/.vs/BleComunicator/v16/.suo" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BleComunicator/.vs/BleComunicator/v16/Server/sqlite3/storage.ide" beforeDir="false" afterPath="$PROJECT_DIR$/BleComunicator/.vs/BleComunicator/v16/Server/sqlite3/storage.ide" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BleComunicator/BleComunicator/Class1.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BleComunicator/BleComunicator/Class1.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BleComunicator/BleComunicator/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BleComunicator/BleComunicator/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BleComunicator/BleComunicator/obj/Debug/netcoreapp2.1/BleComunicator.csprojAssemblyReference.cache" beforeDir="false" afterPath="$PROJECT_DIR$/BleComunicator/BleComunicator/obj/Debug/netcoreapp2.1/BleComunicator.csprojAssemblyReference.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/C_code/arduinoTestCode/arduinoTestCode.ino" beforeDir="false" afterPath="$PROJECT_DIR$/C_code/arduinoTestCode/arduinoTestCode.ino" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/comunication.py" beforeDir="false" afterPath="$PROJECT_DIR$/comunication.py" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,7 +46,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.main">
+  <component name="RunManager" selected="Python.comunication">
     <configuration name="comunication" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="python" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -144,11 +154,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.main" />
-        <item itemvalue="Python.filesystem" />
         <item itemvalue="Python.comunication" />
-        <item itemvalue="Python.resultsPresentation" />
+        <item itemvalue="Python.main" />
         <item itemvalue="Python.mainCuda" />
+        <item itemvalue="Python.filesystem" />
+        <item itemvalue="Python.resultsPresentation" />
       </list>
     </recent_temporary>
   </component>
@@ -210,11 +220,6 @@
           <url>file://$PROJECT_DIR$/neuralNetwork.py</url>
           <line>90</line>
           <option name="timeStamp" value="66" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/comunication.py</url>
-          <line>4</line>
-          <option name="timeStamp" value="67" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>

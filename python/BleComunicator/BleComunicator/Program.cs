@@ -1,6 +1,6 @@
 ﻿using System;
 using Windows.Devices.Bluetooth.Advertisement;
-
+/*
 public class Checker
 {
     private readonly BluetoothLEAdvertisementWatcher mWatcher;
@@ -63,3 +63,4 @@ namespace BleComunicator
         }
     }
 }
+*/

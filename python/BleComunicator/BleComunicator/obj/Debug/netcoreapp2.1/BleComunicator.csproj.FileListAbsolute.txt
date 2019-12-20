@@ -1,0 +1,13 @@
+C:\Users\Sylwester\source\Praca inżynierska\Engineering-Thesis\python\BleComunicator\BleComunicator\obj\Debug\netcoreapp2.1\BleComunicator.csprojAssemblyReference.cache
+C:\Users\Sylwester\source\Praca inżynierska\Engineering-Thesis\python\BleComunicator\BleComunicator\obj\Debug\netcoreapp2.1\BleComunicator.csproj.CoreCompileInputs.cache
+C:\Users\Sylwester\source\Praca inżynierska\Engineering-Thesis\python\BleComunicator\BleComunicator\obj\Debug\netcoreapp2.1\BleComunicator.AssemblyInfoInputs.cache
+C:\Users\Sylwester\source\Praca inżynierska\Engineering-Thesis\python\BleComunicator\BleComunicator\obj\Debug\netcoreapp2.1\BleComunicator.AssemblyInfo.cs
+C:\Users\Sylwester\source\Praca inżynierska\Engineering-Thesis\python\BleComunicator\BleComunicator\bin\Debug\netcoreapp2.1\BleComunicator.deps.json
+C:\Users\Sylwester\source\Praca inżynierska\Engineering-Thesis\python\BleComunicator\BleComunicator\bin\Debug\netcoreapp2.1\BleComunicator.runtimeconfig.json
+C:\Users\Sylwester\source\Praca inżynierska\Engineering-Thesis\python\BleComunicator\BleComunicator\bin\Debug\netcoreapp2.1\BleComunicator.runtimeconfig.dev.json
+C:\Users\Sylwester\source\Praca inżynierska\Engineering-Thesis\python\BleComunicator\BleComunicator\bin\Debug\netcoreapp2.1\BleComunicator.dll
+C:\Users\Sylwester\source\Praca inżynierska\Engineering-Thesis\python\BleComunicator\BleComunicator\bin\Debug\netcoreapp2.1\BleComunicator.pdb
+C:\Users\Sylwester\source\Praca inżynierska\Engineering-Thesis\python\BleComunicator\BleComunicator\bin\Debug\netcoreapp2.1\Windows.winmd
+C:\Users\Sylwester\source\Praca inżynierska\Engineering-Thesis\python\BleComunicator\BleComunicator\obj\Debug\netcoreapp2.1\BleComunicator.csproj.CopyComplete
+C:\Users\Sylwester\source\Praca inżynierska\Engineering-Thesis\python\BleComunicator\BleComunicator\obj\Debug\netcoreapp2.1\BleComunicator.dll
+C:\Users\Sylwester\source\Praca inżynierska\Engineering-Thesis\python\BleComunicator\BleComunicator\obj\Debug\netcoreapp2.1\BleComunicator.pdb
