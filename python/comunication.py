@@ -17,49 +17,55 @@ def main(ble):
 class Commands(object):
     """command executor class it sends commands, check them and maintain errors"""
 
-    class commandsEnum(Enum):
+    class commands(Enum):
         stop = 15
         start = 16
         eg1 = 1
         eg2 = 2
 
-    class additionalInfoEnum(Enum):
-        empty = 0
-        commandStarted = 1
-        commandEnded = 2
-        commandError = 3
-        MobileRobotError = 4
+    class additionalInfo(Enum):
+        empty = 1
+        commandStarted = 2
+        commandEnded = 3
+        commandError = 4
+        MobileRobotError = 5
 
-    class deviceIdEnum(Enum):
-        pc = 0
+    class deviceId(Enum):
+        pc = 2
         mobileRobot = 1
 
     class robotWatchDog(object):
-        """command timers wathing for proper execution"""
+        """command timers waiting for proper execution"""
 
         class commandState(Enum):
             sending = 1
             executing = 2
             done = 3
 
-        class commandTimes(object):
-            sendingTime = 10  # s
-            executingTime = 120  # s
+        class commandTimes(Enum):
+            """in sec"""
+            sendingTime = 10
+            executingTime = 30
 
-        def __init__(self, commandId):
+        def __init__(self, command, commandId, mainPtr):
+            self.mainPtr = mainPtr
+            self.command = command
             self.commandId = commandId
             self.state = self.commandState.sending
-            self.timer = threading.Timer(self.commandTimes.sendingTime, self)
+            self.timer = threading.Timer(self.commandTimes.sendingTime.value, self)
+            self.timer.start()
 
         def __call__(self):
-            print("Command time is up, robot did not changed {} state".format(self.state))
+            print("Command: {}, id {}. Command time is up, robot did not changed {} state\n".format(self.command,
+                                                                                                    self.commandId,
+                                                                                                    self.state))
+            self.mainPtr.delete(self)
 
     def __init__(self):
-        """dict - name of command = id"""
         self.comunicator = None
 
-        self.messageId = 0
-        self.commandId = 0
+        self.messageId = 1
+        self.commandId = 1
         self.ble = BleComunicator(self.gotData)
         self.watchDog = []
 
@@ -68,21 +74,60 @@ class Commands(object):
         self.comunicator = threading.Thread(target=main, args=(self.ble,), daemon=True)
         self.comunicator.start()
 
+    def delete(self, ptr):
+        self.watchDog.remove(ptr)
+
     def executeCommand(self, command):
-        data = bytearray([1, self.messageId, 0, command, self.commandId])
+        data = bytearray(
+            [self.deviceId.pc.value, command.value, self.commandId, self.messageId, self.additionalInfo.empty.value])
+        print(data)
+        self.watchDog.append(self.robotWatchDog(command, self.commandId, self))
+        self.ble.setData(data)
+        self.commandId %= 255
+        self.messageId %= 255
         self.messageId += 1
         self.commandId += 1
-        watchDog = self.robotWatchDog(self.commandId)
-        self.watchDog.append()
-        self.ble.setData(data)
+        print("Command initialization")
 
     def gotData(self, data):
-        self.checkData(data)
-        print("got data" + str(data))
+        # print("got data" + str(data))
+        try:
+            self.checkData(data)
+        except Exception as e:
+            print("An exception occurred while getting data: " + str(e))
+        finally:
+            pass
 
     def checkData(self, data):
-        if (data[0] != 1):
+        deviceId = self.deviceId(data[0])
+        messageId = data[3]
+        additionalInfo = self.additionalInfo(data[4])
+        command = self.commands(data[1])
+        commandId = data[2]
+        # print("{} {} {} {} {}".format(deviceId, messageId, additionalInfo, command, commandId))
+        if deviceId != self.deviceId.mobileRobot:
             print("Wrong device Id, should be 1 - mobile Robot")
+        if additionalInfo == self.additionalInfo.commandError:
+            print("Command error (robot): {}, id {}".format(command, commandId))
+        if additionalInfo == self.additionalInfo.MobileRobotError:
+            print("Robot error")
+        found = False
+        for watchDog in self.watchDog:
+            if commandId == watchDog.commandId:
+                watchDog.timer.cancel()
+                found = True
+                if additionalInfo == self.additionalInfo.commandStarted:
+                    watchDog.state = self.robotWatchDog.commandState.executing
+                    watchDog.timer = threading.Timer(self.robotWatchDog.commandTimes.executingTime.value, watchDog)
+                    watchDog.timer.start()
+                    print("Command under execution")
+                elif additionalInfo == self.additionalInfo.commandEnded:
+                    watchDog.state = self.robotWatchDog.commandState.done
+                    print("Command executed")
+                del watchDog
+                break
+        if not found:
+            print("None of watchdog commands found, error")
 
 
 class BleComunicator(object):
@@ -91,6 +136,7 @@ class BleComunicator(object):
     def __init__(self, fnct):
         self.connected = False
         self.address = "01:02:03:04:1A:DF"  ##bluetooth mac address
+        self.secourityCode = b'V9GV-LSYF-876G-CCNL'
         self.uartUUID = "0000ffe1-0000-1000-8000-00805f9b34fb"  ##transmision characteristic
         self.data = b''
         self.event = threading.Event()
@@ -106,6 +152,8 @@ class BleComunicator(object):
                 # client.set_disconnected_callback(self.disconnected)
                 x = await client.is_connected()
                 print("Connected to mobileRobot")
+                await client.write_gatt_char(self.uartUUID, self.secourityCode)
+                print("SecourityCode checked")
                 await client.start_notify(self.uartUUID, self.getData)
                 while True:
                     self.event.wait()
@@ -123,10 +171,9 @@ class BleComunicator(object):
 if __name__ == "__main__":
     command = Commands()
     command.run()
-    i = 0
     while True:
-        i += 1
-        time.sleep(10)
-        g = 'xDDDDDDDDDD {} \n'.format(i)
-        print("sth")
-        command.executeCommand(g)
+        time.sleep(20)
+        print("command: {}\n".format(command.commandId))
+        print(command.watchDog)
+        command.executeCommand(command.commands.eg1)
+        time.sleep(25)
