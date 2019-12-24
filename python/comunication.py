@@ -29,6 +29,8 @@ class Commands(object):
         commandEnded = 3
         commandError = 4
         MobileRobotError = 5
+        RobotReady = 6
+        accessDenyed = 7
 
     class deviceId(Enum):
         pc = 2
@@ -90,7 +92,7 @@ class Commands(object):
         print("Command initialization")
 
     def gotData(self, data):
-        # print("got data" + str(data))
+        #print("got data" + str(data))
         try:
             self.checkData(data)
         except Exception as e:
@@ -98,13 +100,18 @@ class Commands(object):
         finally:
             pass
 
+    def disconnect(self):
+        self.ble.disconnect()
+
     def checkData(self, data):
         deviceId = self.deviceId(data[0])
-        messageId = data[3]
-        additionalInfo = self.additionalInfo(data[4])
         command = self.commands(data[1])
         commandId = data[2]
+        messageId = data[3]
+        additionalInfo = self.additionalInfo(data[4])
         # print("{} {} {} {} {}".format(deviceId, messageId, additionalInfo, command, commandId))
+        if self.checkAdditionalInfo(deviceId, command, commandId, messageId, additionalInfo):
+            return
         if deviceId != self.deviceId.mobileRobot:
             print("Wrong device Id, should be 1 - mobile Robot")
         if additionalInfo == self.additionalInfo.commandError:
@@ -124,10 +131,29 @@ class Commands(object):
                 elif additionalInfo == self.additionalInfo.commandEnded:
                     watchDog.state = self.robotWatchDog.commandState.done
                     print("Command executed")
-                del watchDog
-                break
+                    watchDog.timer.cancel()
+                    self.delete(watchDog)
+                    break
         if not found:
             print("None of watchdog commands found, error")
+
+    def checkAdditionalInfo(self, deviceId, command, commandId, messageId, additionalInfo):
+        if additionalInfo == self.additionalInfo.empty:
+            return False
+        elif additionalInfo == self.additionalInfo.commandError:
+            print("Command error occurred, id {}".format(commandId))
+            return True
+        elif additionalInfo == self.additionalInfo.accessDenyed:
+            print("Access to robot denied, wrong security code sended")
+            return True
+        elif additionalInfo == self.additionalInfo.RobotReady:
+            print("Robot is ready")
+            return True
+        elif additionalInfo == self.additionalInfo.MobileRobotError:
+            print("Mobile robot error")
+            return True
+        else:
+            return False
 
 
 class BleComunicator(object):
@@ -136,14 +162,19 @@ class BleComunicator(object):
     def __init__(self, fnct):
         self.connected = False
         self.address = "01:02:03:04:1A:DF"  ##bluetooth mac address
-        self.secourityCode = b'V9GV-LSYF-876G-CCNL'
+        self.secourityCode = b'QV9GVE3SYFJ8768CCNL'
         self.uartUUID = "0000ffe1-0000-1000-8000-00805f9b34fb"  ##transmision characteristic
         self.data = b''
         self.event = threading.Event()
         self.onDataFunction = fnct
+        self.disc = False
 
     def setData(self, data):
         self.data = data
+        self.event.set()
+
+    def disconnect(self):
+        self.disc = True
         self.event.set()
 
     async def run(self, loop):
@@ -153,10 +184,11 @@ class BleComunicator(object):
                 x = await client.is_connected()
                 print("Connected to mobileRobot")
                 await client.write_gatt_char(self.uartUUID, self.secourityCode)
-                print("SecourityCode checked")
                 await client.start_notify(self.uartUUID, self.getData)
                 while True:
                     self.event.wait()
+                    if self.disc:
+                        break
                     await client.write_gatt_char(self.uartUUID, self.data)
                     self.event.clear()
         except Exception as e:
@@ -172,8 +204,8 @@ if __name__ == "__main__":
     command = Commands()
     command.run()
     while True:
-        time.sleep(20)
+        time.sleep(12)
         print("command: {}\n".format(command.commandId))
         print(command.watchDog)
         command.executeCommand(command.commands.eg1)
-        time.sleep(25)
+        time.sleep(5)
