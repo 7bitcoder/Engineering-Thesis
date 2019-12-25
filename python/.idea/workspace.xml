@@ -3,8 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="615a3f95-0aa8-4c67-870f-1878902a0950" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/C_code/arduinoTestCode/arduinoTestCode.ino" beforeDir="false" afterPath="$PROJECT_DIR$/C_code/arduinoTestCode/arduinoTestCode.ino" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/comunication.py" beforeDir="false" afterPath="$PROJECT_DIR$/comunication.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -40,7 +38,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.comunication">
+  <component name="RunManager" selected="Python.gui">
     <configuration name="comunication" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="python" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -83,7 +81,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="filesystem" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="gui" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="python" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -95,7 +93,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/filesystem.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/gui.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -148,11 +146,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.gui" />
         <item itemvalue="Python.comunication" />
         <item itemvalue="Python.comunicationTest" />
         <item itemvalue="Python.main" />
         <item itemvalue="Python.mainCuda" />
-        <item itemvalue="Python.filesystem" />
       </list>
     </recent_temporary>
   </component>
