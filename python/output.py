@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'guiLayout.ui'
+# Form implementation generated from reading ui file 'GuiLayout.ui'
 #
 # Created by: PyQt5 UI code generator 5.13.0
 #
@@ -8,12 +8,6 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from comunication import Commands
-from datetime import datetime
-
-start_time = datetime.now()
-import sys
-from PyQt5.QtWidgets import QDialog, QApplication
 
 
 class Ui_RobotController(object):
@@ -77,16 +71,6 @@ class Ui_RobotController(object):
         self.retranslateUi(RobotController)
         QtCore.QMetaObject.connectSlotsByName(RobotController)
 
-        self.commands = Commands(self.print)
-        self.connectedToRobot = False
-        self.pushButton.clicked.connect(self.connect)
-        self.print("Application started")
-        self.comboBox.addItem("None")
-        for val in self.commands.commands:
-            self.comboBox.addItem(val.name, )
-
-        self.pushButton_2.clicked.connect(self.send)
-
     def retranslateUi(self, RobotController):
         _translate = QtCore.QCoreApplication.translate
         RobotController.setWindowTitle(_translate("RobotController", "Robot Controller"))
@@ -94,44 +78,3 @@ class Ui_RobotController(object):
         self.pushButton_2.setText(_translate("RobotController", "Send"))
         self.label.setText(_translate("RobotController", "Information"))
         self.label_2.setText(_translate("RobotController", "Manual commands"))
-
-    def connect(self):
-        if self.connectedToRobot:
-            self.commands.disconnect()
-        else:
-            self.commands.run()
-
-    def send(self):
-        if not self.connectedToRobot:
-            self.print("Cannot send command, connection to robot is not established")
-            return
-        if self.comboBox.currentIndex() == 0:
-            pass
-        else:
-            command = self.commands.commands(self.comboBox.currentIndex())
-            self.commands.executeCommand(command)
-            self.comboBox.setCurrentIndex(0)
-
-    def print(self, str, unlock=0):
-        dt = (datetime.now() - start_time)
-        sec = dt.microseconds / 1000000
-        min = int(dt.seconds / 60)
-        string = "{}:{:4.2f}".format(min, (dt.seconds % 60) + sec)
-        self.textBrowser.append("[{}] {}".format(string, str))
-        if unlock == 1:
-            self.connectedToRobot = True
-            self.pushButton.setText("Disconnect")
-        elif unlock == 2:
-            self.connectedToRobot = False
-            self.pushButton.setText("Connect")
-
-
-if __name__ == '__main__':
-    import sys
-
-    app = QtWidgets.QApplication(sys.argv)
-    window = QtWidgets.QMainWindow()
-    ui = Ui_RobotController()
-    ui.setupUi(window)
-    window.show()
-    sys.exit(app.exec_())

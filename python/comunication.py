@@ -9,7 +9,6 @@ from bleak import BleakClient
 
 
 def main(ble):
-    print("starting low level comunication")
     loop = asyncio.new_event_loop()
     loop.run_until_complete(ble.run(loop))
 
@@ -18,10 +17,10 @@ class Commands(object):
     """command executor class it sends commands, check them and maintain errors"""
 
     class commands(Enum):
-        stop = 15
-        start = 16
         eg1 = 1
         eg2 = 2
+        stop = 15
+        start = 16
 
     class additionalInfo(Enum):
         empty = 1
@@ -49,30 +48,32 @@ class Commands(object):
             sendingTime = 10
             executingTime = 30
 
-        def __init__(self, command, commandId, mainPtr):
+        def __init__(self, command, commandId, mainPtr, print):
             self.mainPtr = mainPtr
             self.command = command
             self.commandId = commandId
             self.state = self.commandState.sending
             self.timer = threading.Timer(self.commandTimes.sendingTime.value, self)
             self.timer.start()
+            self.print = print
 
         def __call__(self):
-            print("Command: {}, id {}. Command time is up, robot did not changed {} state\n".format(self.command,
-                                                                                                    self.commandId,
-                                                                                                    self.state))
+            self.print(
+                "Command: {}, id {}. Command time is up, robot did not changed {} state\n".format(self.command,
+                                                                                                  self.commandId,
+                                                                                                  self.state))
             self.mainPtr.delete(self)
 
-    def __init__(self):
+    def __init__(self, print):
         self.comunicator = None
 
         self.messageId = 1
         self.commandId = 1
-        self.ble = BleComunicator(self.gotData)
+        self.ble = BleComunicator(self.gotData, print)
         self.watchDog = []
+        self.print = print
 
     def run(self):
-        print("running thread for low level comunicator")
         self.comunicator = threading.Thread(target=main, args=(self.ble,), daemon=True)
         self.comunicator.start()
 
@@ -82,21 +83,21 @@ class Commands(object):
     def executeCommand(self, command):
         data = bytearray(
             [self.deviceId.pc.value, command.value, self.commandId, self.messageId, self.additionalInfo.empty.value])
-        print(data)
-        self.watchDog.append(self.robotWatchDog(command, self.commandId, self))
+        # print(data)
+        self.watchDog.append(self.robotWatchDog(command, self.commandId, self, self.print))
         self.ble.setData(data)
         self.commandId %= 255
         self.messageId %= 255
         self.messageId += 1
         self.commandId += 1
-        print("Command initialization")
+        self.print("Command initialization")
 
     def gotData(self, data):
-        #print("got data" + str(data))
+        # print("got data" + str(data))
         try:
             self.checkData(data)
         except Exception as e:
-            print("An exception occurred while getting data: " + str(e))
+            self.print("An exception occurred while getting data: " + str(e))
         finally:
             pass
 
@@ -113,11 +114,11 @@ class Commands(object):
         if self.checkAdditionalInfo(deviceId, command, commandId, messageId, additionalInfo):
             return
         if deviceId != self.deviceId.mobileRobot:
-            print("Wrong device Id, should be 1 - mobile Robot")
+            self.print("Wrong device Id, should be 1 - mobile Robot")
         if additionalInfo == self.additionalInfo.commandError:
-            print("Command error (robot): {}, id {}".format(command, commandId))
+            self.print("Command error (robot): {}, id {}".format(command, commandId))
         if additionalInfo == self.additionalInfo.MobileRobotError:
-            print("Robot error")
+            self.print("Robot error")
         found = False
         for watchDog in self.watchDog:
             if commandId == watchDog.commandId:
@@ -127,30 +128,30 @@ class Commands(object):
                     watchDog.state = self.robotWatchDog.commandState.executing
                     watchDog.timer = threading.Timer(self.robotWatchDog.commandTimes.executingTime.value, watchDog)
                     watchDog.timer.start()
-                    print("Command under execution")
+                    self.print("Command under execution")
                 elif additionalInfo == self.additionalInfo.commandEnded:
                     watchDog.state = self.robotWatchDog.commandState.done
-                    print("Command executed")
+                    self.print("Command executed")
                     watchDog.timer.cancel()
                     self.delete(watchDog)
                     break
         if not found:
-            print("None of watchdog commands found, error")
+            self.print("None of watchdog commands found, error")
 
     def checkAdditionalInfo(self, deviceId, command, commandId, messageId, additionalInfo):
         if additionalInfo == self.additionalInfo.empty:
             return False
         elif additionalInfo == self.additionalInfo.commandError:
-            print("Command error occurred, id {}".format(commandId))
+            self.print("Command error occurred, id {}".format(commandId))
             return True
         elif additionalInfo == self.additionalInfo.accessDenyed:
-            print("Access to robot denied, wrong security code sended")
+            self.print("Access to robot denied, wrong security code sended")
             return True
         elif additionalInfo == self.additionalInfo.RobotReady:
-            print("Robot is ready")
+            self.print("Robot is ready", unlock=1)
             return True
         elif additionalInfo == self.additionalInfo.MobileRobotError:
-            print("Mobile robot error")
+            self.print("Mobile robot error")
             return True
         else:
             return False
@@ -159,7 +160,7 @@ class Commands(object):
 class BleComunicator(object):
     """bluetooth low level comunicator"""
 
-    def __init__(self, fnct):
+    def __init__(self, fnct, print):
         self.connected = False
         self.address = "01:02:03:04:1A:DF"  ##bluetooth mac address
         self.secourityCode = b'QV9GVE3SYFJ8768CCNL'
@@ -168,6 +169,7 @@ class BleComunicator(object):
         self.event = threading.Event()
         self.onDataFunction = fnct
         self.disc = False
+        self.print = print
 
     def setData(self, data):
         self.data = data
@@ -178,11 +180,12 @@ class BleComunicator(object):
         self.event.set()
 
     async def run(self, loop):
+        self.print("Running communicator interface")
         try:
             async with BleakClient(self.address, loop=loop) as client:
                 # client.set_disconnected_callback(self.disconnected)
                 x = await client.is_connected()
-                print("Connected to mobileRobot")
+                self.print("Connected to mobileRobot")
                 await client.write_gatt_char(self.uartUUID, self.secourityCode)
                 await client.start_notify(self.uartUUID, self.getData)
                 while True:
@@ -191,10 +194,11 @@ class BleComunicator(object):
                         break
                     await client.write_gatt_char(self.uartUUID, self.data)
                     self.event.clear()
+            self.print("Disconnected", unlock=2)
         except Exception as e:
-            print("An exception occurred: " + str(e))
+            self.print("An exception occurred: " + str(e))
         finally:
-            print("Disconnected")
+            self.print("Communicator closed")
 
     def getData(self, sender, data):
         self.onDataFunction(data)
