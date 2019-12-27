@@ -6,11 +6,33 @@ import time
 from enum import Enum
 from bleak import _logger as logger
 from bleak import BleakClient
+from PyQt5.QtCore import QObject, pyqtSignal
 
 
 def main(ble):
     loop = asyncio.new_event_loop()
     loop.run_until_complete(ble.run(loop))
+
+
+class Signals(QObject):
+    '''
+    Defines the signals available from a running worker thread.
+
+    Supported signals are:
+
+    finished
+        No data
+
+    error
+        `tuple` (exctype, value, traceback.format_exc() )
+
+    result
+        `object` data returned from processing, anything
+
+    '''
+    finished = pyqtSignal()
+    lock = pyqtSignal(int)
+    print = pyqtSignal(object)
 
 
 class Commands(object):
@@ -64,14 +86,13 @@ class Commands(object):
                                                                                                   self.state))
             self.mainPtr.delete(self)
 
-    def __init__(self, print):
+    def __init__(self):
         self.comunicator = None
-
         self.messageId = 1
         self.commandId = 1
-        self.ble = BleComunicator(self.gotData, print)
+        self.ble = BleComunicator(self.gotData)
         self.watchDog = []
-        self.print = print
+        self.signals = Signals()
 
     def run(self):
         self.comunicator = threading.Thread(target=main, args=(self.ble,), daemon=True)
@@ -83,7 +104,7 @@ class Commands(object):
     def executeCommand(self, command):
         data = bytearray(
             [self.deviceId.pc.value, command.value, self.commandId, self.messageId, self.additionalInfo.empty.value])
-        self.print(data)
+        self.signals.print.emit(data)
         self.watchDog.append(self.robotWatchDog(command, self.commandId, self, self.print))
         self.ble.setData(data)
         self.commandId %= 255
@@ -91,6 +112,9 @@ class Commands(object):
         self.messageId += 1
         self.commandId += 1
         self.print("Command initialization")
+
+    def print(self, str):
+        self.signals.print.emit(str)
 
     def gotData(self, data):
         # print("got data" + str(data))
@@ -149,7 +173,8 @@ class Commands(object):
             self.ble.timer.cancel()
             return True
         elif additionalInfo == self.additionalInfo.RobotReady:
-            self.print("Robot is ready", unlock=1)
+            self.print("Robot is ready")
+            self.signals.lock.emit(1)
             self.ble.timer.cancel()
             return True
         elif additionalInfo == self.additionalInfo.MobileRobotError:
@@ -162,7 +187,7 @@ class Commands(object):
 class BleComunicator(object):
     """bluetooth low level comunicator"""
 
-    def __init__(self, fnct, print):
+    def __init__(self, fnct):
         self.connected = False
         self.address = "01:02:03:04:1A:DF"  ##bluetooth mac address
         self.secourityCode = b'QV9GVE3SYFJ8768CCNL'
@@ -171,8 +196,11 @@ class BleComunicator(object):
         self.event = threading.Event()
         self.onDataFunction = fnct
         self.disc = False
-        self.print = print
+        self.signals = Signals()
         self.timer = threading.Timer(10, self.secourityCodeTimeUp)
+
+    def print(self, str):
+        self.signals.print.emit(str)
 
     def setData(self, data):
         self.data = data
@@ -204,14 +232,16 @@ class BleComunicator(object):
         except Exception as e:
             self.print("An exception occurred: " + str(e))
         finally:
-            self.print("Communicator closed", unlock=2)
+            self.print("Communicator closed")
+            self.signals.lock.emit(2)
             self.disc = False
 
     def getData(self, sender, data):
         self.onDataFunction(data)
 
     def secourityCodeTimeUp(self):
-        self.print("Time for accept connection is up", unlock=2)
+        self.print("Time for accept connection is up")
+        self.signals.lock.emit(2)
         self.disc = True
         self.event.set()
 

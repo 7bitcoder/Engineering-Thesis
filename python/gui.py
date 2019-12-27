@@ -93,7 +93,12 @@ class Ui_RobotController(QObject):
         self.retranslateUi(RobotController)
         QtCore.QMetaObject.connectSlotsByName(RobotController)
 
-        self.commands = Commands(self.print)
+        self.commands = Commands()
+        self.commands.signals.print.connect(self.print)
+        self.commands.signals.lock.connect(self.unlock)
+        self.commands.ble.signals.print.connect(self.print)
+        self.commands.ble.signals.lock.connect(self.unlock)
+
         self.connectedToRobot = False
         self.connectionInProgress = False
         self.pushButton.clicked.connect(self.connect)
@@ -111,7 +116,6 @@ class Ui_RobotController(QObject):
         self.finished = self.recognition.signals.finished
 
         self.recognition.start()
-        self.print("next")
 
     def retranslateUi(self, RobotController):
         _translate = QtCore.QCoreApplication.translate
@@ -145,12 +149,14 @@ class Ui_RobotController(QObject):
             self.commands.executeCommand(command)
             self.comboBox.setCurrentIndex(0)
 
-    def print(self, str, unlock=0):
+    def print(self, str):
         dt = datetime.now().time()
         sec = dt.microsecond / 1000000
         string = "{}:{}:{:4.2f}".format(dt.hour, dt.minute, dt.second + sec)
         self.textBrowser.append("[{}] {}".format(string, str))
         self.textBrowser.verticalScrollBar().setValue(self.textBrowser.verticalScrollBar().maximum())
+
+    def unlock(self, unlock):
         if unlock == 1:
             self.connectedToRobot = True
             self.pushButton.setText("Disconnect")
