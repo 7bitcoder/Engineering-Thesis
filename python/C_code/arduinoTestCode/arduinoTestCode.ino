@@ -64,6 +64,7 @@ void setup()
   digitalWrite(LOCKLED, LOW);
   Serial.begin(9600);
   Serial.println("Robot Started");
+  Serial.println("yes started");
   ble.begin(9600); // set HM10 serial at 9600 baud rate
   attachInterrupt(digitalPinToInterrupt(INTERRUPT), interrupt, RISING);
 }
@@ -81,9 +82,11 @@ void loop()
 }
 
 bool checkNewConnection(){
+  Serial.println("eg11111!!!!!!");
   int i=0;
     newConnection = false;
     unsigned long time = millis() + 3000;
+    Serial.println(time);
     while( millis() < time) {
       while(ble.available()){
         formatBuff[i] = ble.read();
@@ -91,29 +94,32 @@ bool checkNewConnection(){
       }
     }
     formatBuff[i] = '\0';
+    Serial.println(i);
+    Serial.println(formatBuff);
     int secourity = strcmp(formatBuff, secourityCode);
+    Serial.println("hereqwq qwd");
     if(secourity){
       //wrong code = disconnect
       Serial.println("Access to robot denyed");
-    frame[0] = indentificator::mobileRobot;
-    frame[1] = 1;
-    frame[2] = 1;
-    frame[3] = messageId++;
-    frame[4] = indentificator::accessDenyed;
-    frame[5] = '\0';
-    strcpy(frame + 5, "Access denyed");
-    ble.write(frame);
-    return false;
+      frame[0] = indentificator::mobileRobot;
+      frame[1] = 1;
+      frame[2] = 1;
+      frame[3] = messageId++;
+      frame[4] = indentificator::accessDenyed;
+      frame[5] = '\0';
+      strcpy(frame + 5, "Access denyed");
+      ble.write(frame);
+      return false;
     } else {
-    frame[0] = indentificator::mobileRobot;
-    frame[1] = 1;
-    frame[2] = 1;
-    frame[3] = messageId++;
-    frame[4] = indentificator::RobotReady;
-    frame[5] = '\0';
-    ble.write(frame, 5);
-    Serial.println("Access to robot confirmed");
-    return true;
+      frame[0] = indentificator::mobileRobot;
+      frame[1] = 1;
+      frame[2] = 1;
+      frame[3] = messageId++;
+      frame[4] = indentificator::RobotReady;
+      frame[5] = '\0';
+      ble.write(frame, 5);
+      Serial.println("Access to robot confirmed");
+      return true;
     }
     
 }

@@ -79,6 +79,7 @@ class Ui_RobotController(object):
 
         self.commands = Commands(self.print)
         self.connectedToRobot = False
+        self.connectionInProgress = False
         self.pushButton.clicked.connect(self.connect)
         self.print("Application started")
         self.comboBox.addItem("None")
@@ -96,6 +97,9 @@ class Ui_RobotController(object):
         self.label_2.setText(_translate("RobotController", "Manual commands"))
 
     def connect(self):
+        if self.connectionInProgress:
+            return
+        self.connectionInProgress = True
         if self.connectedToRobot:
             self.commands.disconnect()
         else:
@@ -113,16 +117,18 @@ class Ui_RobotController(object):
             self.comboBox.setCurrentIndex(0)
 
     def print(self, str, unlock=0):
-        dt = (datetime.now() - start_time)
-        sec = dt.microseconds / 1000000
-        min = int(dt.seconds / 60)
-        string = "{}:{:4.2f}".format(min, (dt.seconds % 60) + sec)
+        dt = datetime.now().time()
+        sec = dt.microsecond / 1000000
+        string = "{}:{}:{:4.2f}".format(dt.hour, dt.minute, dt.second + sec)
         self.textBrowser.append("[{}] {}".format(string, str))
+        self.textBrowser.verticalScrollBar().setValue(self.textBrowser.verticalScrollBar().maximum())
         if unlock == 1:
             self.connectedToRobot = True
             self.pushButton.setText("Disconnect")
+            self.connectionInProgress = False
         elif unlock == 2:
             self.connectedToRobot = False
+            self.connectionInProgress = False
             self.pushButton.setText("Connect")
 
 

@@ -83,7 +83,7 @@ class Commands(object):
     def executeCommand(self, command):
         data = bytearray(
             [self.deviceId.pc.value, command.value, self.commandId, self.messageId, self.additionalInfo.empty.value])
-        # print(data)
+        self.print(data)
         self.watchDog.append(self.robotWatchDog(command, self.commandId, self, self.print))
         self.ble.setData(data)
         self.commandId %= 255
@@ -146,9 +146,11 @@ class Commands(object):
             return True
         elif additionalInfo == self.additionalInfo.accessDenyed:
             self.print("Access to robot denied, wrong security code sended")
+            self.ble.timer.cancel()
             return True
         elif additionalInfo == self.additionalInfo.RobotReady:
             self.print("Robot is ready", unlock=1)
+            self.ble.timer.cancel()
             return True
         elif additionalInfo == self.additionalInfo.MobileRobotError:
             self.print("Mobile robot error")
@@ -170,9 +172,11 @@ class BleComunicator(object):
         self.onDataFunction = fnct
         self.disc = False
         self.print = print
+        self.timer = threading.Timer(10, self.secourityCodeTimeUp)
 
     def setData(self, data):
         self.data = data
+        self.print(data)
         self.event.set()
 
     def disconnect(self):
@@ -188,20 +192,28 @@ class BleComunicator(object):
                 self.print("Connected to mobileRobot")
                 await client.write_gatt_char(self.uartUUID, self.secourityCode)
                 await client.start_notify(self.uartUUID, self.getData)
-                while True:
+                self.timer = threading.Timer(10, self.secourityCodeTimeUp)
+                self.timer.start()
+                while not self.disc:
                     self.event.wait()
                     if self.disc:
                         break
                     await client.write_gatt_char(self.uartUUID, self.data)
                     self.event.clear()
-            self.print("Disconnected", unlock=2)
+            self.print("Disconnected")
         except Exception as e:
             self.print("An exception occurred: " + str(e))
         finally:
-            self.print("Communicator closed")
+            self.print("Communicator closed", unlock=2)
+            self.disc = False
 
     def getData(self, sender, data):
         self.onDataFunction(data)
+
+    def secourityCodeTimeUp(self):
+        self.print("Time for accept connection is up", unlock=2)
+        self.disc = True
+        self.event.set()
 
 
 if __name__ == "__main__":
