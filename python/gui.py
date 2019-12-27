@@ -10,16 +10,24 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from comunication import Commands
 from datetime import datetime
-
-start_time = datetime.now()
+from main import GestureRecognition, Signals
+from PyQt5.QtCore import QObject, pyqtSignal
+from PyQt5.QtCore import *
+import time
 import sys
 from PyQt5.QtWidgets import QDialog, QApplication
 
 
-class Ui_RobotController(object):
+class Ui_RobotController(QObject):
+
+    def closeNeuralNetworkThread(self):
+        self.commands.disconnect()
+        self.recognition.stop()
+        self.recognition.wait()
+
     def setupUi(self, RobotController):
         RobotController.setObjectName("RobotController")
-        RobotController.resize(1335, 799)
+        RobotController.resize(1400, 800)
         self.centralwidget = QtWidgets.QWidget(RobotController)
         self.centralwidget.setObjectName("centralwidget")
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
@@ -51,8 +59,16 @@ class Ui_RobotController(object):
         font.setPointSize(13)
         self.label.setFont(font)
         self.label.setLayoutDirection(QtCore.Qt.LeftToRight)
+
+        self.fps = QtWidgets.QLabel(self.centralwidget)
+        self.fps.setGeometry(QtCore.QRect(500, 50, 381, 61))
+        font = QtGui.QFont()
+        font.setPointSize(13)
+        self.fps.setFont(font)
+        self.fps.setLayoutDirection(QtCore.Qt.LeftToRight)
+
         self.label.setObjectName("label")
-        self.graphicsView = QtWidgets.QGraphicsView(self.centralwidget)
+        self.graphicsView = QtWidgets.QLabel(self.centralwidget)
         self.graphicsView.setGeometry(QtCore.QRect(500, 60, 800, 600))
         self.graphicsView.setObjectName("graphicsView")
         self.comboBox = QtWidgets.QComboBox(self.centralwidget)
@@ -88,13 +104,26 @@ class Ui_RobotController(object):
 
         self.pushButton_2.clicked.connect(self.send)
 
+        self.recognition = GestureRecognition(self.showFps)
+        self.recognition.setTerminationEnabled(True)
+        self.recognition.signals.result.connect(self.getRecognitionResult)
+
+        self.finished = self.recognition.signals.finished
+
+        self.recognition.start()
+        self.print("next")
+
     def retranslateUi(self, RobotController):
         _translate = QtCore.QCoreApplication.translate
         RobotController.setWindowTitle(_translate("RobotController", "Robot Controller"))
         self.pushButton.setText(_translate("RobotController", "Connect"))
         self.pushButton_2.setText(_translate("RobotController", "Send"))
         self.label.setText(_translate("RobotController", "Information"))
+        self.fps.setText("Fps: 0")
         self.label_2.setText(_translate("RobotController", "Manual commands"))
+
+    def showFps(self, fps):
+        self.fps.setText("Fps: {}".format(fps))
 
     def connect(self):
         if self.connectionInProgress:
@@ -131,13 +160,20 @@ class Ui_RobotController(object):
             self.connectionInProgress = False
             self.pushButton.setText("Connect")
 
+    def getRecognitionResult(self, image, output):
+        height, width, byteValue = image.shape
+        image = QtGui.QImage(image, image.shape[1], image.shape[0], image.shape[1] * 3, QtGui.QImage.Format_RGB888)
+        pix = QtGui.QPixmap(image)
+        self.graphicsView.setPixmap(pix)
+
 
 if __name__ == '__main__':
     import sys
 
-    app = QtWidgets.QApplication(sys.argv)
-    window = QtWidgets.QMainWindow()
     ui = Ui_RobotController()
+    app = QtWidgets.QApplication(sys.argv)
+    app.aboutToQuit.connect(ui.closeNeuralNetworkThread)
+    window = QtWidgets.QMainWindow()
     ui.setupUi(window)
     window.show()
     sys.exit(app.exec_())
