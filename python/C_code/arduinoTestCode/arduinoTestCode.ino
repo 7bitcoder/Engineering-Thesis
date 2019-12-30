@@ -1,68 +1,154 @@
 /*
- One Shot
- Kudos to marguskohv - he sowed the seed....
-Serial monitor is just aide memoire
- */
-#include <SoftwareSerial.h>
+  One Shot
+  Kudos to marguskohv - he sowed the seed....
+  Serial monitor is just aide memoire
+*/
+#include "SoftwareSerial.h"
+
 SoftwareSerial ble(2, 4); // RX | TX
 #define INTERRUPT 3
 #define LOCKLED 12
+#define Rx 2
+#define Tx 4
+#define false 0
+#define true 1
+#define halfTurn 500
 
-namespace indentificator{
-  const char mobileRobot = 1;
-  const char pc = 2;
-  const char empty = 1;
-  const char commandAccepted = 2;
-  const char commandExecuted = 3;
-  const char commandError = 4;
-  const char robotError = 5;
-  const char RobotReady = 6;
-  const char accessDenyed = 7;
-}
+typedef int bool;
+//napięcia na pinach 3.3V
+//command frame dates and meaining
+//byte 1: device
+const char mobileRobot = 1;
+const char pc = 2;
+//byte 5 additional info
+const char empty = 1;
+const char commandAccepted = 2;
+const char commandExecuted = 3;
+const char commandError = 4;
+const char robotError = 5;
+const char RobotReady = 6;
+const char accessDenyed = 7;
+
 const char* secourityCode = "QV9GVE3SYFJ8768CCNL";
+//comunication data
 char messageId = 1;
 int gotBytes = 0;
 bool message = false;
 char frame[6] = {0};
 
-char deviceId = frame[0];
-char messageIdExternal = frame[1];
-char additionalInfo = frame[2];
-char command = frame[3];
-char commandId = frame[4];
+char deviceId;
+char messageIdExternal;
+char additionalInfo;
+char command;
+char commandId;
+char executionCommand;
+char executionCommandId;
 
-    
-enum State{
+//commands states
+enum State {
+  locked,
   waiting,
   commandAccept,
-  commandExecutution,
+  commandExecution,
   commandEnded
 };
 
-bool unlock = false;
-int resetPin = 12;
-bool newConnection = false;
-State state = State::waiting;
-char formatBuff[200];
+//commands
+const char def = 1;
+const char turnLeft = 2;
+const char turnRight = 3;
+const char turnAround = 6;
+const char forward = 7;
+const char backward = 8;
+const char speedUp = 9;
+const char slowDown = 10;
+const char biggerTurnAngle = 11;
+const char smallerTurnAngle = 12;
+const char biggerStep = 13;
+const char smallerStep = 14;
+const char stopCommand = 15;
+const char start = 16;
 
-void interrupt(){
+//connection handle
+volatile bool unlock = false;
+volatile bool newConnection = false;
+volatile bool disconnected = true;
+enum State state = waiting;
+char formatBuff[30];
+
+//motors movement data
+//360 full round 144 ticks
+
+//changing steps with settings
+const int turnOffest = halfTurn / (2 * 5); //18 deg
+const int speedOffest = 127 / 8; //max 127
+const int stepOffest = 80;
+
+const int minSpeed = 10;
+const int maxSpeed = 120;
+const int maxStep = 800;
+const int minStep = 50;
+const int maxTurn = halfTurn; //180 deg
+const int minTurn = halfTurn / 18; //10 deg
+//default
+int step = halfTurn;
+int speed = 30;
+int turn = halfTurn / 4;
+
+int left = 0;
+int right = 0;
+int leftEnd = 0;
+int rightEnd = 0;
+
+void test();
+bool checkNewConnection();
+void checkConnections();
+void readData();
+void checkData();
+void stop();
+void setExecutionParameters();
+void checkIfExecuted();
+
+//help functions
+void setFrame(int a, int b, int c, int d, int e);
+int sign(int x) {
+  if (!x) //0
+    return 0;
+  else if (x > 0)
+    return 1;
+  else
+    return -1;
+}
+
+void interrupt() {
   Serial.println("new Connection");
   newConnection = true;
 }
 
-void show(){
-  sprintf(formatBuff, "Bajt1 = %d, Bajt2 = %d, Bajt3: = %d, Bajt4 = %d, Bajt5 = %d",int(frame[0]),int(frame[1]),int(frame[2]),int(frame[3]),int(frame[4]) );
+void show() {
+  sprintf(formatBuff, "Bajt1 = %d, Bajt2 = %d, Bajt3: = %d, Bajt4 = %d, Bajt5 = %d", int(frame[0]), int(frame[1]), int(frame[2]), int(frame[3]), int(frame[4]) );
+  Serial.println(formatBuff);
+  sprintf(formatBuff, "device = %d, commnad = %d, commandid = %d, messageid= %d, additional info= %d", deviceId, command, commandId, messageId, additionalInfo);
   Serial.println(formatBuff);
 }
-bool checkNewConnection();
-void readData();
-void checkData();
-
+unsigned long beg = 0;
+void drive_speed(int, int);
+void drive_getTicks(int * l, int * r) {          // Get encoder measurements
+  unsigned long end = millis() - beg;
+  end /= 10;
+  *l = *r = end;
+  Serial.println(end);
+}
+void drive_getSpeed(int * l, int * r) {};
+void drive_feedback(int x) {};
+void drive_clearTicks() {
+  beg = millis();
+};
 void setup()
 {
   pinMode(LOCKLED, OUTPUT);
   digitalWrite(LOCKLED, LOW);
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println("Robot Started");
   Serial.println("yes started");
   ble.begin(9600); // set HM10 serial at 9600 baud rate
@@ -71,101 +157,211 @@ void setup()
 
 void loop()
 {
-  if(newConnection){
+  if (newConnection) { // new connection, check it!!
     unlock = checkNewConnection();
-    digitalWrite(LOCKLED, unlock ? LOW : HIGH);
+    disconnected = false;
+    if (unlock)
+      digitalWrite(LOCKLED, LOW);
+    else //if connection is wrong then set lock led
+      digitalWrite(LOCKLED, HIGH);
   }
-  if(unlock) {
+  else if (disconnected && unlock) { //if disconnected lock devide
+    stop();
+    unlock = false;
+  }
+  if (unlock) {
     readData();
-    checkData();
+    if (message)
+      checkData();
+    if (state == commandExecution) {
+      checkIfExecuted();
+    }
   }
 }
 
-bool checkNewConnection(){
+bool checkNewConnection() {
   Serial.println("eg11111!!!!!!");
-  int i=0;
-    newConnection = false;
-    unsigned long time = millis() + 3000;
-    Serial.println(time);
-    while( millis() < time) {
-      while(ble.available()){
-        formatBuff[i] = ble.read();
-        i++;
-      }
+  int i = 0;
+  newConnection = false;
+  unsigned long time = millis() + 3000;
+  Serial.println(time);
+  while ( millis() < time) {
+    while (ble.available()) {
+      formatBuff[i] = ble.read();
+      i++;
     }
-    formatBuff[i] = '\0';
-    Serial.println(i);
-    Serial.println(formatBuff);
-    int secourity = strcmp(formatBuff, secourityCode);
-    Serial.println("hereqwq qwd");
-    if(secourity){
-      //wrong code = disconnect
-      Serial.println("Access to robot denyed");
-      frame[0] = indentificator::mobileRobot;
-      frame[1] = 1;
-      frame[2] = 1;
-      frame[3] = messageId++;
-      frame[4] = indentificator::accessDenyed;
-      frame[5] = '\0';
-      strcpy(frame + 5, "Access denyed");
-      ble.write(frame);
-      return false;
-    } else {
-      frame[0] = indentificator::mobileRobot;
-      frame[1] = 1;
-      frame[2] = 1;
-      frame[3] = messageId++;
-      frame[4] = indentificator::RobotReady;
-      frame[5] = '\0';
-      ble.write(frame, 5);
-      Serial.println("Access to robot confirmed");
-      return true;
-    }
-    
+  }
+  formatBuff[i] = '\0';
+  Serial.println(i);
+  Serial.println(formatBuff);
+  int secourity = strcmp(formatBuff, secourityCode);
+  Serial.println("hereqwq qwd");
+  if (secourity) {
+    //wrong code = disconnect
+    Serial.println("Access to robot denyed");
+    setFrame(mobileRobot, 1, 1, messageId++, accessDenyed);
+    strcpy(frame + 5, "Access denyed");
+    ble.write(frame);
+    return false;
+  } else {
+    setFrame(mobileRobot, 1, 1, messageId++, RobotReady);
+    ble.write(frame, 5);
+    Serial.println("Access to robot confirmed");
+    return true;
+  }
+
 }
 
-void readData(){
-   if(ble.available() == 5) {   // if HM10 sends something then read
+void readData() {
+  if (ble.available() == 5) {  // if HM10 sends something then read
     int i = 5;
-    while(i--){
-    char ch = ble.read();
-    frame[gotBytes++] = ch;
+    while (i--) {
+      char ch = ble.read();
+      frame[gotBytes++] = ch;
     }
     //show();
     message = true;
     gotBytes = 0;
   }
- 
-}
-void checkData(){
-   if (message) {           // Read user input if available.
-    deviceId = frame[0];
-    command = frame[1];
-    commandId = frame[2];
-    messageIdExternal = frame[3];
-    additionalInfo = frame[4];
 
-    frame[0] = indentificator::mobileRobot;
-    frame[1] = command;
-    frame[2] = commandId;
-    frame[3] = messageId++;
-    frame[4] = indentificator::commandAccepted;
-    frame[5] = '\0';
+}
+
+void drive_speed(int , int) {
+
+}
+
+void checkData() {
+  // check command
+  Serial.println("checking data");
+  deviceId = frame[0];
+  command = frame[1];
+  commandId = frame[2];
+  messageIdExternal = frame[3];
+  additionalInfo = frame[4];
+  message = false;
+  setExecutionParameters();
+  //show();
+  delay(100);
+}
+
+void stop() {
+  Serial.println("stop");
+  drive_speed(0, 0);
+  state = waiting;
+}
+
+void setExecutionParameters() {
+  Serial.println("exec params");
+  if (command == def) { //def
+    Serial.println("default");
+    return;
+  }
+  if (command >= speedUp) { //controll setting commands executed instant
+    Serial.println("settings");
+    int signR, signL;
+    bool error = false;
+    if (command == speedUp) {
+      speed += speedOffest;
+      if (speed > maxSpeed)
+        speed = maxSpeed;
+      drive_getSpeed(&signR, &signL);
+      drive_speed(sign(signR)*speed, sign(signL)*speed);
+    } else if (command == slowDown) {
+      speed -= speedOffest;
+      if (speed < minSpeed)
+        speed = minSpeed;
+      drive_getSpeed(&signR, &signL);
+      drive_speed(sign(signR)*speed, sign(signL)*speed);
+    } else if (command == biggerTurnAngle) {
+      turn += turnOffest;
+      if (turn > maxTurn)
+        turn = maxTurn;
+    } else if (command == smallerTurnAngle) {
+      turn -= turnOffest;
+      if (turn < minTurn)
+        turn = minTurn;
+    } else if (command == biggerStep) {
+      step += stepOffest;
+      if (step > maxStep)
+        step = maxStep;
+    } else if (command == smallerStep) {
+      step -= stepOffest;
+      if (step < minStep)
+        step = minStep;
+    } else if (command == stopCommand) {
+      stop();
+    } else {
+      error = true;
+    }
+    Serial.println("sending");
+    setFrame(mobileRobot, command, commandId, messageId++, error ? commandError : commandExecuted);
     ble.write(frame, 5);
-    Serial.write(frame, 5);
-    show();
-    state = State::commandAccept;
-    message = false;
+    Serial.print("komenda: ");
+    Serial.println(int(command));
+    Serial.print("komenda nastawcza wykonana, id: ");
+    Serial.println(int(commandId));
+  } else { //executable commands
+    Serial.println("executalebe");
+    bool error = false;
+    drive_feedback(0);
+    drive_clearTicks();
+    if (command == forward) {
+      leftEnd = step;
+      rightEnd = step;
+      drive_speed(speed, speed);
+    } else if (command == backward) {
+      leftEnd = step;
+      rightEnd = step;
+      drive_speed(-speed, -speed);
+    } else if (command == turnLeft) {
+      leftEnd = turn;
+      rightEnd = turn;
+      drive_speed(-speed, speed);
+    } else if (command == turnRight) {
+      leftEnd = turn;
+      rightEnd = turn;
+      drive_speed(speed, -speed);
+    } else if (command == turnAround) {
+      leftEnd = halfTurn;
+      rightEnd = halfTurn;
+      drive_speed(speed, -speed);
+    } else {
+      error = true;
+    }
+    setFrame(mobileRobot, command, commandId, messageId++, error ? commandError : commandAccepted);
+    ble.write( frame, 5);
+    Serial.print(frame);
+    //show();
+    state = commandExecution;
+    executionCommand = command;
+    executionCommandId = commandId;
+    Serial.print("komenda: ");
+    Serial.println(int(command));
     Serial.print("komenda w trakcie wykonywania, id: ");
     Serial.println(int(commandId));
-    delay(5000);
-    frame[4] = indentificator::commandExecuted;
-    frame[3] = messageId++;
-    ble.write(frame, 5);
-    Serial.write(frame, 5);
-    show();
-    state = State::commandEnded;
-    Serial.print("komenda wykonana, id: ");
-    Serial.println(int(commandId));
   }
+}
+
+void checkIfExecuted() {
+  drive_getTicks(&left, &right);
+  if (abs(left) > leftEnd && abs(right) > rightEnd ) {
+    stop();
+    setFrame(mobileRobot, command, commandId, messageId++, commandExecuted);
+    ble.write(frame, 5);
+    Serial.print(frame);
+    //show();
+    Serial.print("komenda: ");
+    Serial.println(int(executionCommand));
+    Serial.print("komenda wykonana, id: ");
+    Serial.println(int(executionCommandId));
+  }
+}
+
+void setFrame(int a, int b, int c, int d, int e) {
+  frame[0] = a;
+  frame[1] = b;
+  frame[2] = c;
+  frame[3] = d;
+  frame[4] = e;
+  frame[5] = '\0';
 }

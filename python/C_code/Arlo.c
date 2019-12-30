@@ -9,11 +9,15 @@
 #define Tx 4
 #define false 0
 #define true 1
+#define halfTurn 500
+
 typedef int bool;
 //napięcia na pinach 3.3V
-bool sa = true;
+//command frame dates and meaining
+//byte 1: device
 const char mobileRobot = 1;
 const char pc = 2;
+//byte 5 additional info
 const char empty = 1;
 const char commandAccepted = 2;
 const char commandExecuted = 3;
@@ -23,7 +27,7 @@ const char RobotReady = 6;
 const char accessDenyed = 7;
 
 const char* secourityCode = "QV9GVE3SYFJ8768CCNL";
-
+//comunication data
 char messageId = 1;
 int gotBytes = 0;
 bool message = false;
@@ -34,18 +38,64 @@ char messageIdExternal;
 char additionalInfo;
 char command;
 char commandId;
+char executionCommand;
+char executionCommandId;
 
+//commands states
 enum State{
+  locked,
   waiting,
   commandAccept,
-  commandExecutution,
+  commandExecution,
   commandEnded
 };
 
+//commands
+const int def = 1;
+const int turnLeft = 2;
+const int turnRight = 3;
+const int turnAround = 6;
+const int forward = 7;
+const int backward = 8;
+const int speedUp = 9;
+const int slowDown = 10;
+const int biggerTurnAngle = 11;
+const int smallerTurnAngle = 12;
+const int biggerStep = 13;
+const int smallerStep = 14;
+const int stopCommand = 15;
+const int start = 16;
+
+//connection handle
 volatile bool unlock = false;
 volatile bool newConnection = false;
+volatile bool disconnected = true;
 enum State state = waiting;
 char formatBuff[200];
+
+//motors movement data
+//360 full round 144 ticks
+
+//changing steps with settings 
+const int turnOffest = halfTurn/(2*5); //18 deg
+const int speedOffest = 127/8; //max 127
+const int stepOffest = 80;
+
+const int minSpeed = 10;
+const int maxSpeed = 120;
+const int maxStep = 800;
+const int minStep = 50;
+const int maxTurn = halfTurn; //180 deg
+const int minTurn = halfTurn/18; //10 deg
+//default
+int step = halfTurn;
+int speed = 30;
+int turn = halfTurn/4;
+
+int left = 0;
+int right = 0;
+int leftEnd = 0;
+int rightEnd = 0;
 
 fdserial *ble; //bluetooth serial interface
 
@@ -54,24 +104,46 @@ bool checkNewConnection();
 void checkConnections();
 void readData();
 void checkData();
+void stop();
+void setExecutionParameters();
+void checkIfExecuted();
 
-int main()                                    // Main function
+//help functions
+void setFrame(int a, int b, int c, int d, int e);
+int sign(int x){
+  if(!x) //0
+    return 0;
+  else if(x > 0)
+    return 1;
+  else 
+    return -1; 
+}  
+
+int main()
 {
   ble = fdserial_open(Rx, Tx, 0, 9600);//open ble communication
   test();
-  cog_run(checkConnections, 128);
+  cog_run(checkConnections, 128); // run new connection detector
   while(1){
-    if(newConnection){
+    if(newConnection){// new connection, check it!!
       unlock = checkNewConnection();
-      if(unlock) // error led state
+      disconnected = false;
+      if(unlock) 
         low(LOCKLED);
-      else
+      else //if connection is wrong then set lock led
         high(LOCKLED);
     }
+    else if(disconnected && unlock ){//if disconnected lock devide
+      stop();
+      unlock = false;
+    }      
     if(unlock) {
       readData();
       if(message)
         checkData();
+      if(state == commandExecution){
+        checkIfExecuted();
+      }        
     }
   }    
 }
@@ -85,6 +157,7 @@ int main()                                    // Main function
   s = dhb10_com("VER\r");                     // Request firmware version
   print("Firmware\n  VER = %s", s);           // Display reply
 } 
+
 void checkConnections(){
   int state = input(INTERRUPT);
   int lastState = state;
@@ -92,7 +165,10 @@ void checkConnections(){
     state = input(INTERRUPT);
     if(state > lastState){
       newConnection = true;
-    }      
+    }   
+    else if(state < lastState){
+      disconnected = true; 
+    }         
     lastState = state;
   }    
 }  
@@ -118,22 +194,12 @@ bool checkNewConnection(){
   if(secourity){
     //wrong code = disconnect
     print("Access to robot denyed\n");
-    frame[0] = mobileRobot;
-    frame[1] = 1;
-    frame[2] = 1;
-    frame[3] = messageId++;
-    frame[4] = accessDenyed;
-    frame[5] = '\0';
+    setFrame(mobileRobot, 1, 1, messageId++, accessDenyed);
     strcpy(frame + 5, "Access denyed");
     dprint(ble, frame);
     return false;
   } else {
-    frame[0] = mobileRobot;
-    frame[1] = 1;
-    frame[2] = 1;
-    frame[3] = messageId++;
-    frame[4] = RobotReady;
-    frame[5] = '\0';
+    setFrame(mobileRobot, 1, 1, messageId++, RobotReady);
     dprint(ble, frame);
     print("Access to robot confirmed\n");
     return true;
@@ -141,7 +207,7 @@ bool checkNewConnection(){
 }
 
 void readData(){
-   if(fdserial_rxReady(ble) != -1) {   // if HM10 sends something then read
+   if(fdserial_rxReady(ble) != -1) { 
     char ch = fdserial_rxChar(ble);
     frame[gotBytes++] = ch;
     //show();
@@ -160,25 +226,119 @@ void checkData(){
     commandId = frame[2];
     messageIdExternal = frame[3];
     additionalInfo = frame[4];
-
-    frame[0] = mobileRobot;
-    frame[1] = command;
-    frame[2] = commandId;
-    frame[3] = messageId++;
-    frame[4] = commandAccepted;
-    frame[5] = '\0';
-    dprint(ble, frame);
-    print(frame);
-    //show();
-    state = commandAccept;
     message = false;
-    print("komenda w trakcie wykonywania, id: %d\n", commandId);
-    pause(5000);
-    frame[4] = commandExecuted;
-    frame[3] = messageId++;
+    setExecutionParameters();
+}
+
+void stop(){
+  drive_speed(0, 0);
+  state = waiting;
+}  
+
+void setExecutionParameters(){
+  if(command == def) //def
+      return;
+  int signR, signL;
+  bool error = false;
+  if(command >= speedUp){ //controll setting commands executed instant
+   if(command == speedUp){
+      speed += speedOffest;
+      if(speed > maxSpeed)
+        speed = maxSpeed;
+     drive_getSpeed(&signR, &signL);
+     drive_speed(sign(signR)*speed, sign(signL)*speed);
+    } 
+    else if(command == slowDown){
+      speed -= speedOffest;
+      if(speed < minSpeed)
+        speed = minSpeed;
+     drive_getSpeed(&signR, &signL);
+     drive_speed(sign(signR)*speed, sign(signL)*speed);
+    } 
+    else if(command == biggerTurnAngle){
+      turn += turnOffest;
+      if(turn > maxTurn)
+        turn = maxTurn;
+    } 
+    else if(command == smallerTurnAngle){
+     turn -= turnOffest;
+      if(turn < minTurn)
+        turn = minTurn;
+    } 
+    else if(command == biggerStep){
+      step += stepOffest;
+      if(step > maxStep)
+        step = maxStep;
+    } 
+    else if(command == smallerStep){
+      step -= stepOffest;
+      if(step < minStep)
+        step = minStep;
+    } else if(command == stopCommand) {
+       stop(); 
+    }      
+    else{
+      error = true;
+    }      
+    setFrame(mobileRobot, command, commandId, messageId++, error ? commandError : commandExecuted);
+    dprint(ble, frame);
+    print("komenda nastawcza wykonana, id: %d\n", commandId);
+  }
+  else { //executable commands  
+    drive_feedback(0);
+    drive_clearTicks();
+    if(command == forward){
+      leftEnd = step;
+      rightEnd = step;
+      drive_speed(speed, speed);
+    } else if(command == backward){
+      leftEnd = step;
+      rightEnd = step;
+      drive_speed(-speed, -speed);
+    } else if(command == turnLeft){
+      leftEnd = turn;
+      rightEnd = turn;
+      drive_speed(-speed, speed);
+    } else if(command == turnRight){
+      leftEnd = turn;
+      rightEnd = turn;
+      drive_speed(speed, -speed);
+    } else if(command == turnAround){
+      leftEnd = halfTurn;
+      rightEnd = halfTurn;
+      drive_speed(speed, -speed);
+    } else {
+      error = true;
+    }
+    setFrame(mobileRobot, command, commandId, messageId++, error ? commandError : commandAccepted);
     dprint(ble, frame);
     print(frame);
     //show();
-    state = commandEnded;
+    state = commandExecution;
+    executionCommand = command;
+    executionCommandId = commandId;
+    print("komenda w trakcie wykonywania, id: %d\n", commandId);
+  }  
+}    
+
+void checkIfExecuted(){
+  drive_getTicks(&left, &right);
+  if (abs(left) > leftEnd || left < -leftEnd  || right > rightEnd || right < -rightEnd){
+    stop(); 
+    setFrame(mobileRobot, command, commandId, messageId++, commandExecuted);
+    dprint(ble, frame);
+    print(frame);
+    //show();
     print("komenda wykonana, id: %d\n", commandId);
+  }     
+}  
+
+
+void setFrame(int a, int b, int c, int d, int e){
+    frame[0] = a;
+    frame[1] = b;
+    frame[2] = c;
+    frame[3] = d;
+    frame[4] = e;
+    frame[5] = '\0';
 }

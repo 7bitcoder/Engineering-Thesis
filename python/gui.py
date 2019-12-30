@@ -112,10 +112,12 @@ class Ui_RobotController(QObject):
         self.connectedToRobot = False
         self.connectionInProgress = False
         self.pushButton.clicked.connect(self.connect)
+        self.pushButton3.clicked.connect(self.emergencyStop)
+
         self.print("Application started")
-        self.comboBox.addItem("None")
+        self.comboBox.addItem("None", 1)
         for val in self.commands.commands:
-            self.comboBox.addItem(val.name, )
+            self.comboBox.addItem(val.name, val.value)
 
         self.pushButton_2.clicked.connect(self.send)
 
@@ -140,6 +142,9 @@ class Ui_RobotController(QObject):
     def showFps(self, fps):
         self.fps.setText("Fps: {}".format(fps))
 
+    def emergencyStop(self):
+        self.commands.executeCommand(self.commands.commands.stopCommand)
+
     def connect(self):
         if self.connectionInProgress:
             return
@@ -150,15 +155,21 @@ class Ui_RobotController(QObject):
             self.commands.run()
 
     def send(self):
-        if not self.connectedToRobot:
-            self.print("Cannot send command, connection to robot is not established")
-            return
-        if self.comboBox.currentIndex() == 0:
+        try:
+            if not self.connectedToRobot:
+                self.print("Cannot send command, connection to robot is not established")
+                return
+            if self.comboBox.currentIndex() == 0:
+                pass
+            else:
+                self.print(self.comboBox.currentData())
+                command = self.commands.commands(int(self.comboBox.currentData()))
+                self.commands.executeCommand(command)
+                self.comboBox.setCurrentIndex(0)
+        except Exception as e:
+            self.print(e)
+        finally:
             pass
-        else:
-            command = self.commands.commands(self.comboBox.currentIndex())
-            self.commands.executeCommand(command)
-            self.comboBox.setCurrentIndex(0)
 
     def print(self, str):
         dt = datetime.now().time()

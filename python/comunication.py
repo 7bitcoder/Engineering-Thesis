@@ -27,9 +27,19 @@ class Commands(object):
     """command executor class it sends commands, check them and maintain errors"""
 
     class commands(Enum):
-        eg1 = 1
-        eg2 = 2
-        stop = 15
+        default = 1
+        turnLeft = 2
+        turnRight = 3
+        turnAround = 6
+        forward = 7
+        backward = 8
+        speedUp = 9
+        slowDown = 10
+        biggerTurnAngle = 11
+        smallerTurnAngle = 12
+        biggerStep = 13
+        smallerStep = 14
+        stopCommand = 15
         start = 16
 
     class additionalInfo(Enum):
@@ -69,7 +79,7 @@ class Commands(object):
 
         def __call__(self):
             self.print(
-                "Command: {}, id {}. Command time is up, robot did not changed {} state\n".format(self.command,
+                "Command: {}, id {}. Command time is up, robot did not changed {} state\n".format(self.command.name,
                                                                                                   self.commandId,
                                                                                                   self.state))
             self.mainPtr.delete(self)
@@ -93,13 +103,15 @@ class Commands(object):
         data = bytearray(
             [self.deviceId.pc.value, command.value, self.commandId, self.messageId, self.additionalInfo.empty.value])
         self.signals.print.emit(data)
+        # self.print(str(data))
         self.watchDog.append(self.robotWatchDog(command, self.commandId, self, self.print))
         self.ble.setData(data)
+        prefix = "Command: {}, commandId: {} - ".format(command.name, self.commandId)
         self.commandId %= 255
         self.messageId %= 255
         self.messageId += 1
         self.commandId += 1
-        self.print("Command initialization")
+        self.print("{} initialization".format(prefix))
 
     def print(self, str):
         self.signals.print.emit(str)
@@ -122,13 +134,14 @@ class Commands(object):
         commandId = data[2]
         messageId = data[3]
         additionalInfo = self.additionalInfo(data[4])
+        prefix = "Command: {}, commandId: {} - ".format(command.name, commandId)
         # print("{} {} {} {} {}".format(deviceId, messageId, additionalInfo, command, commandId))
-        if self.checkAdditionalInfo(deviceId, command, commandId, messageId, additionalInfo):
+        if self.checkCommands(deviceId, command, commandId, messageId, additionalInfo):
             return
         if deviceId != self.deviceId.mobileRobot:
             self.print("Wrong device Id, should be 1 - mobile Robot")
         if additionalInfo == self.additionalInfo.commandError:
-            self.print("Command error (robot): {}, id {}".format(command, commandId))
+            self.print("{}Error".format(prefix))
         if additionalInfo == self.additionalInfo.MobileRobotError:
             self.print("Robot error")
         found = False
@@ -140,29 +153,34 @@ class Commands(object):
                     watchDog.state = self.robotWatchDog.commandState.executing
                     watchDog.timer = threading.Timer(self.robotWatchDog.commandTimes.executingTime.value, watchDog)
                     watchDog.timer.start()
-                    self.print("Command under execution")
+                    self.print("{}Under execution".format(prefix))
                 elif additionalInfo == self.additionalInfo.commandEnded:
                     watchDog.state = self.robotWatchDog.commandState.done
-                    self.print("Command executed")
+                    self.print("{}Executed".format(prefix))
                     watchDog.timer.cancel()
                     self.delete(watchDog)
                     break
         if not found:
             self.print("None of watchdog commands found, error")
 
-    def checkAdditionalInfo(self, deviceId, command, commandId, messageId, additionalInfo):
+    def checkCommands(self, deviceId, command, commandId, messageId, additionalInfo):
+        if command == self.commands.stopCommand:
+            self.print("Stop command executed, robot has cancelled executing commands")
+            for watchDog in self.watchDog:
+                watchDog.timer.cancel()
+            self.watchDog.clear()
+            return True
         if additionalInfo == self.additionalInfo.empty:
             return False
         elif additionalInfo == self.additionalInfo.commandError:
             self.print("Command error occurred, id {}".format(commandId))
             return True
         elif additionalInfo == self.additionalInfo.accessDenyed:
-            self.print("Access to robot denied, wrong security code sended")
+            self.print("Access to robot denied, wrong security code sent")
             self.ble.timer.cancel()
             return True
         elif additionalInfo == self.additionalInfo.RobotReady:
             self.print("Robot is ready")
-            self.signals.lock.emit(1)
             self.ble.timer.cancel()
             return True
         elif additionalInfo == self.additionalInfo.MobileRobotError:
@@ -204,8 +222,9 @@ class BleComunicator(object):
         try:
             async with BleakClient(self.address, loop=loop) as client:
                 # client.set_disconnected_callback(self.disconnected)
+                self.signals.lock.emit(1)
                 x = await client.is_connected()
-                self.print("Connected to mobileRobot")
+                self.print("Connected to mobile robot")
                 await client.write_gatt_char(self.uartUUID, self.secourityCode)
                 await client.start_notify(self.uartUUID, self.getData)
                 self.timer = threading.Timer(10, self.secourityCodeTimeUp)
