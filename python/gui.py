@@ -66,6 +66,15 @@ class Ui_RobotController(QObject):
         self.pushButton_4.setAcceptDrops(False)
         self.pushButton_4.setObjectName("pushButton_4")
 
+        self.pushButton_5 = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton_5.setGeometry(QtCore.QRect(900, 48, 80, 60))
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(15)
+        self.pushButton_5.setFont(font)
+        self.pushButton_5.setAcceptDrops(False)
+        self.pushButton_5.setObjectName("pushButton_5")
+
         self.textBrowser = QtWidgets.QTextBrowser(self.centralwidget)
         self.textBrowser.setGeometry(QtCore.QRect(50, 230, 500, 280))
         font = QtGui.QFont()
@@ -93,6 +102,13 @@ class Ui_RobotController(QObject):
         font.setPointSize(13)
         self.capturing.setFont(font)
         self.capturing.setLayoutDirection(QtCore.Qt.LeftToRight)
+
+        self.network = QtWidgets.QLabel(self.centralwidget)
+        self.network.setGeometry(QtCore.QRect(800, 50, 381, 61))
+        font = QtGui.QFont()
+        font.setPointSize(13)
+        self.network.setFont(font)
+        self.network.setLayoutDirection(QtCore.Qt.LeftToRight)
 
         self.label.setObjectName("label")
         self.graphicsView = QtWidgets.QLabel(self.centralwidget)
@@ -163,6 +179,7 @@ class Ui_RobotController(QObject):
             i += 1
 
         self.pushButton_2.clicked.connect(self.send)
+        self.pushButton_5.clicked.connect(self.onNetwork)
 
         self.recognition = GestureRecognition(self.showFps)
         self.recognition.setTerminationEnabled(True)
@@ -170,6 +187,7 @@ class Ui_RobotController(QObject):
 
         self.finished = self.recognition.signals.finished
         self.gesturesCapturing = False
+        self.netowkrProcess = True
         self.recognition.start()
 
     def retranslateUi(self, RobotController):
@@ -179,10 +197,12 @@ class Ui_RobotController(QObject):
         self.pushButton_2.setText(_translate("RobotController", "Send"))
         self.pushButton3.setText(_translate("RobotController", "Emergency stop"))
         self.pushButton_4.setText(_translate("RobotController", "OFF"))
+        self.pushButton_5.setText(_translate("RobotController", "ON"))
         self.label.setText(_translate("RobotController", "Information"))
         self.fps.setText("Fps: 0")
         self.capturing.setText("Gesture capturing: ")
         self.label_2.setText(_translate("RobotController", "Manual commands"))
+        self.network.setText(_translate("RobotController", "Network: "))
 
     def capture(self):
         if self.gesturesCapturing:
@@ -190,6 +210,13 @@ class Ui_RobotController(QObject):
         else:
             self.pushButton_4.setText("OFF")
         self.gesturesCapturing = not self.gesturesCapturing
+
+    def onNetwork(self):
+        if self.netowkrProcess:
+            self.pushButton_5.setText("ON")
+        else:
+            self.pushButton_5.setText("OFF")
+        self.netowkrProcess = not self.netowkrProcess
 
     def showFps(self, fps):
         self.fps.setText("Fps: {}".format(fps))
