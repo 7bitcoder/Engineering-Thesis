@@ -56,6 +56,16 @@ class Ui_RobotController(QObject):
         self.pushButton_2.setFont(font)
         self.pushButton_2.setAcceptDrops(False)
         self.pushButton_2.setObjectName("pushButton_2")
+
+        self.pushButton_4 = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton_4.setGeometry(QtCore.QRect(1200, 48, 80, 60))
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(15)
+        self.pushButton_4.setFont(font)
+        self.pushButton_4.setAcceptDrops(False)
+        self.pushButton_4.setObjectName("pushButton_4")
+
         self.textBrowser = QtWidgets.QTextBrowser(self.centralwidget)
         self.textBrowser.setGeometry(QtCore.QRect(50, 230, 500, 280))
         font = QtGui.QFont()
@@ -76,6 +86,13 @@ class Ui_RobotController(QObject):
         font.setPointSize(13)
         self.fps.setFont(font)
         self.fps.setLayoutDirection(QtCore.Qt.LeftToRight)
+
+        self.capturing = QtWidgets.QLabel(self.centralwidget)
+        self.capturing.setGeometry(QtCore.QRect(1000, 50, 381, 61))
+        font = QtGui.QFont()
+        font.setPointSize(13)
+        self.capturing.setFont(font)
+        self.capturing.setLayoutDirection(QtCore.Qt.LeftToRight)
 
         self.label.setObjectName("label")
         self.graphicsView = QtWidgets.QLabel(self.centralwidget)
@@ -100,6 +117,15 @@ class Ui_RobotController(QObject):
         self.statusbar.setObjectName("statusbar")
         RobotController.setStatusBar(self.statusbar)
 
+        font.setPointSize(12)
+        self.label_4 = QtWidgets.QLabel(self.centralwidget)
+        self.label_4.setGeometry(QtCore.QRect(490, 110, 200, 41))
+        self.label_4.setFont(font)
+        self.label_4.setLayoutDirection(QtCore.Qt.LeftToRight)
+        self.label_4.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+        self.label_4.setObjectName("Capture probabilities")
+        self.label_4.setText("Capture probabilities:")
+
         self.retranslateUi(RobotController)
         QtCore.QMetaObject.connectSlotsByName(RobotController)
 
@@ -113,11 +139,28 @@ class Ui_RobotController(QObject):
         self.connectionInProgress = False
         self.pushButton.clicked.connect(self.connect)
         self.pushButton3.clicked.connect(self.emergencyStop)
+        self.pushButton_4.clicked.connect(self.capture)
+
+        self.gesturesLabels = []
+
+        font = QtGui.QFont()
+        font.setPointSize(10)
 
         self.print("Application started")
         self.comboBox.addItem("None", 1)
+        offset = 30
+        i = 0
         for val in self.commands.commands:
             self.comboBox.addItem(val.name, val.value)
+            label_2 = QtWidgets.QLabel(self.centralwidget)
+            label_2.setGeometry(QtCore.QRect(560, 150 + i*offset, 130, 41))
+            label_2.setFont(font)
+            label_2.setLayoutDirection(QtCore.Qt.LeftToRight)
+            label_2.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+            label_2.setObjectName(val.name)
+            label_2.setText(val.name)
+            self.gesturesLabels.append(label_2)
+            i += 1
 
         self.pushButton_2.clicked.connect(self.send)
 
@@ -126,7 +169,7 @@ class Ui_RobotController(QObject):
         self.recognition.signals.result.connect(self.getRecognitionResult)
 
         self.finished = self.recognition.signals.finished
-
+        self.gesturesCapturing = False
         self.recognition.start()
 
     def retranslateUi(self, RobotController):
@@ -135,9 +178,18 @@ class Ui_RobotController(QObject):
         self.pushButton.setText(_translate("RobotController", "Connect"))
         self.pushButton_2.setText(_translate("RobotController", "Send"))
         self.pushButton3.setText(_translate("RobotController", "Emergency stop"))
+        self.pushButton_4.setText(_translate("RobotController", "OFF"))
         self.label.setText(_translate("RobotController", "Information"))
         self.fps.setText("Fps: 0")
+        self.capturing.setText("Gesture capturing: ")
         self.label_2.setText(_translate("RobotController", "Manual commands"))
+
+    def capture(self):
+        if self.gesturesCapturing:
+            self.pushButton_4.setText("ON")
+        else:
+            self.pushButton_4.setText("OFF")
+        self.gesturesCapturing = not self.gesturesCapturing
 
     def showFps(self, fps):
         self.fps.setText("Fps: {}".format(fps))
