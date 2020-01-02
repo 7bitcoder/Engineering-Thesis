@@ -13,7 +13,8 @@ from datetime import datetime
 from main import GestureRecognition, Signals
 from PyQt5.QtCore import QObject, pyqtSignal
 from PyQt5.QtCore import *
-import time
+from torch import argmax
+from time import time
 import sys
 from PyQt5.QtWidgets import QDialog, QApplication
 
@@ -90,21 +91,21 @@ class Ui_RobotController(QObject):
         self.label.setLayoutDirection(QtCore.Qt.LeftToRight)
 
         self.fps = QtWidgets.QLabel(self.centralwidget)
-        self.fps.setGeometry(QtCore.QRect(700, 50, 381, 61))
+        self.fps.setGeometry(QtCore.QRect(700, 50, 100, 61))
         font = QtGui.QFont()
         font.setPointSize(13)
         self.fps.setFont(font)
         self.fps.setLayoutDirection(QtCore.Qt.LeftToRight)
 
         self.capturing = QtWidgets.QLabel(self.centralwidget)
-        self.capturing.setGeometry(QtCore.QRect(1000, 50, 381, 61))
+        self.capturing.setGeometry(QtCore.QRect(1000, 50, 200, 61))
         font = QtGui.QFont()
         font.setPointSize(13)
         self.capturing.setFont(font)
         self.capturing.setLayoutDirection(QtCore.Qt.LeftToRight)
 
         self.network = QtWidgets.QLabel(self.centralwidget)
-        self.network.setGeometry(QtCore.QRect(800, 50, 381, 61))
+        self.network.setGeometry(QtCore.QRect(800, 50, 100, 61))
         font = QtGui.QFont()
         font.setPointSize(13)
         self.network.setFont(font)
@@ -112,7 +113,7 @@ class Ui_RobotController(QObject):
 
         self.label.setObjectName("label")
         self.graphicsView = QtWidgets.QLabel(self.centralwidget)
-        self.graphicsView.setGeometry(QtCore.QRect(700, 60, 800, 600))
+        self.graphicsView.setGeometry(QtCore.QRect(700, 120, 640, 480))
         self.graphicsView.setObjectName("graphicsView")
         self.comboBox = QtWidgets.QComboBox(self.centralwidget)
         self.comboBox.setGeometry(QtCore.QRect(50, 120, 150, 31))
@@ -169,7 +170,7 @@ class Ui_RobotController(QObject):
         for val in self.commands.commands:
             self.comboBox.addItem(val.name, val.value)
             label_2 = QtWidgets.QLabel(self.centralwidget)
-            label_2.setGeometry(QtCore.QRect(560, 150 + i*offset, 130, 41))
+            label_2.setGeometry(QtCore.QRect(560, 150 + i * offset, 130, 41))
             label_2.setFont(font)
             label_2.setLayoutDirection(QtCore.Qt.LeftToRight)
             label_2.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
@@ -189,6 +190,9 @@ class Ui_RobotController(QObject):
         self.gesturesCapturing = False
         self.netowkrProcess = True
         self.recognition.start()
+        self.lastCompute = None
+        self.frames = 0
+        self.time = time()
 
     def retranslateUi(self, RobotController):
         _translate = QtCore.QCoreApplication.translate
@@ -205,18 +209,20 @@ class Ui_RobotController(QObject):
         self.network.setText(_translate("RobotController", "Network: "))
 
     def capture(self):
+        self.gesturesCapturing = not self.gesturesCapturing
         if self.gesturesCapturing:
             self.pushButton_4.setText("ON")
         else:
             self.pushButton_4.setText("OFF")
-        self.gesturesCapturing = not self.gesturesCapturing
 
     def onNetwork(self):
+        self.netowkrProcess = not self.netowkrProcess
         if self.netowkrProcess:
             self.pushButton_5.setText("ON")
+            self.recognition.disableNetwork = False
         else:
             self.pushButton_5.setText("OFF")
-        self.netowkrProcess = not self.netowkrProcess
+            self.recognition.disableNetwork = True
 
     def showFps(self, fps):
         self.fps.setText("Fps: {}".format(fps))
@@ -233,18 +239,21 @@ class Ui_RobotController(QObject):
         else:
             self.commands.run()
 
-    def send(self):
+    def send(self, recognized=None):
         try:
             if not self.connectedToRobot:
                 self.print("Cannot send command, connection to robot is not established")
                 return
-            if self.comboBox.currentIndex() == 0:
-                pass
+            if recognized is None:
+                if self.comboBox.currentIndex() == 0:
+                    pass
+                else:
+                    self.print(self.comboBox.currentData())
+                    command = self.commands.commands(int(self.comboBox.currentData()))
+                    self.commands.executeCommand(command)
+                    self.comboBox.setCurrentIndex(0)
             else:
-                self.print(self.comboBox.currentData())
-                command = self.commands.commands(int(self.comboBox.currentData()))
-                self.commands.executeCommand(command)
-                self.comboBox.setCurrentIndex(0)
+                self.commands.executeCommand(recognized)
         except Exception as e:
             self.print(e)
         finally:
@@ -268,10 +277,24 @@ class Ui_RobotController(QObject):
             self.pushButton.setText("Connect")
 
     def getRecognitionResult(self, image, output):
-        height, width, byteValue = image.shape
         image = QtGui.QImage(image, image.shape[1], image.shape[0], image.shape[1] * 3, QtGui.QImage.Format_RGB888)
         pix = QtGui.QPixmap(image)
         self.graphicsView.setPixmap(pix)
+        self.frames += 1
+        self.computeGesture(output)
+
+    def computeGesture(self, output):
+        index = argmax(output).item() + 1  # label
+        if (not self.gesturesCapturing) or (not self.netowkrProcess) or index != self.lastCompute:
+            self.time = time()
+            self.frames = 0
+        elif time() - self.time > 1 and self.frames > 15:
+            command = self.commands.commands(index)
+            self.print("Recognized: {}".format(command.name))
+            self.send(command)
+            self.time = time()
+            self.frames = 0
+        self.lastCompute = index
 
 
 if __name__ == '__main__':

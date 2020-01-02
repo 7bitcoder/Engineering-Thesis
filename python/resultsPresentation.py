@@ -40,5 +40,5 @@ def create_acc_loss_graph(modelName):
 
 
 if __name__ == "__main__":
-    modelName = 'model2.log'
+    modelName = 'model3.log'
     create_acc_loss_graph(modelName)

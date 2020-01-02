@@ -8,6 +8,7 @@ import torch
 from PyQt5.QtCore import *
 from time import time
 
+
 # functions to show an image
 class Signals(QObject):
     '''
@@ -35,21 +36,21 @@ class GestureRecognition(QThread):
 
     def __init__(self, print):
         super(GestureRecognition, self).__init__()
-        self.width = 80
+        self.width = 60
         self.heigh = 60
         self.colors = [(255, 0, 0), (0, 255, 0), (0, 0, 255)]
-        self.labels = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17',
-                       '18', '19',
-                       '20', '21', '22', '23', '24', '25', '26']
+        self.labels = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13']
         self.maxLen = 200
-        self.step = 20
+        self.step = 30.1
         self.offset = 5
+        self.offset2 = 44
         self.printFps = print
         self.thicc = 10
         self.device = cv2.VideoCapture(0, cv2.CAP_DSHOW)
         self.net = Net(self.width, self.heigh)
         self.transform = transforms.Compose(
-            [tf.Grayscale(),
+            [
+            tf.Grayscale(),
              tf.Resize((self.heigh, self.width)),
              tf.ToTensor(),
              tf.Normalize((0.5,), (0.5,))
@@ -57,19 +58,23 @@ class GestureRecognition(QThread):
         self.signals = Signals()
         self.running = True
         self.signals.finished.connect(self.stop)
+        self.cameraHeigh = int(self.device.get(4))  # 480
+        self.cameraWidth = int(self.device.get(3))  # 640
+        self.cut = self.cameraWidth - self.cameraHeigh
+        self.alpha = 0.2
+        self.disableNetwork = False
 
     def stop(self):
         self.running = False
 
     def drawStatistics(self, image, stats, chosen):
+        copy = image.copy()
+        cv2.rectangle(copy, (0, 0), (self.cut, self.cameraHeigh), (128, 128, 128), cv2.FILLED)
+        image = cv2.addWeighted(image, self.alpha, copy, 1 - self.alpha, gamma=0)
         for i, data in enumerate(stats.view(-1)):
-            imm = 10
-            cv2.rectangle(image, (self.offset, i * self.step),
-                          (self.offset + (data * self.maxLen), (i * self.step) + self.thicc), self.colors[i % 3], -1)
-            cv2.putText(image, self.labels[i], (self.offset, i * self.step + 15), fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-                        fontScale=0.5,
-                        color=(255, 255, 255), thickness=1, lineType=-1)
-        nnm = 20
+            cv2.rectangle(image, (self.offset, int(self.offset2 + i * self.step)),
+                          (self.offset + (data * self.maxLen), int(i * self.step) + self.thicc + self.offset2), self.colors[i % 3], -1)
+        return image
 
     def imshow(self, img):
         img = img.view(self.heigh, self.width, 1).numpy() / 2 + 0.5  # unnormalize
@@ -85,21 +90,21 @@ class GestureRecognition(QThread):
 
         # new settings
 
-        self.device.set(5, 25)  # set fps
-        #print(self.device.get(16))
-        #self.device.set(16, 1)  #set to rgb
+        self.device.set(5, 30)  # set fps
+        # print(self.device.get(16))
+        # self.device.set(16, 1)  #set to rgb
 
-        #print("width: " + str(self.device.get(3)) + " heigh: " + str(self.device.get(4)))
+        # print("width: " + str(self.device.get(3)) + " heigh: " + str(self.device.get(4)))
 
-        self.net = torch.load("./savedMode2.pth")
+        self.net = torch.load("./savedMode3.pth")
         self.net.eval()
 
         if self.device.isOpened():  # try to get the first frame
             rval, frame = self.device.read()
-           # print(frame.shape)
+        # print(frame.shape)
         else:
             rval = False
-        out = torch.zeros(27)
+        out = torch.zeros(13)
         start = time()
         fps = 0
         while rval and self.running:
@@ -110,15 +115,15 @@ class GestureRecognition(QThread):
                 self.printFps(fps)
                 fps = 0
             rval, frame = self.device.read()
-            # frame = cv2.imread(r'./kinect_leap_dataset/acquisitions/P1/G1/0_rgb.png')
-            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            frame = cv2.flip(frame, 1)
             frameWithStats = frame.copy()
-            #print(frameWithStats.shape)
-            self.drawStatistics(frameWithStats, out, 1)
-            # cv2.imshow("preview", frameWithStats)
+            frameWithStats = cv2.cvtColor(frameWithStats, cv2.COLOR_BGR2RGB)
+            frame = frame[:, self.cut:self.cameraWidth]
             frame = self.transform(frame).view(-1, 1, self.heigh, self.width)
-            #print(frame.shape)
-            #imshow(frame)
-            out = self.net(frame)
+            if not self.disableNetwork:
+                out = self.net(frame)
+            else:
+                out = torch.zeros(13)
+            frameWithStats = self.drawStatistics(frameWithStats, out, 1)
             self.signals.result.emit(frameWithStats, out)
-            #print(out.shape)
+# print(out.shape)

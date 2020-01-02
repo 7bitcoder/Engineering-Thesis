@@ -57,17 +57,17 @@ enum State {
 const char def = 1;
 const char turnLeft = 2;
 const char turnRight = 3;
-const char turnAround = 6;
-const char forward = 7;
-const char backward = 8;
-const char speedUp = 9;
-const char slowDown = 10;
-const char biggerTurnAngle = 11;
-const char smallerTurnAngle = 12;
-const char biggerStep = 13;
-const char smallerStep = 14;
-const char stopCommand = 15;
-const char start = 16;
+const char turnAround = 4;
+const char forward = 5;
+const char backward = 6;
+const char speedUp = 7;
+const char slowDown = 8;
+const char biggerTurnAngle = 9;
+const char smallerTurnAngle = 10;
+const char biggerStep = 11;
+const char smallerStep = 12;
+const char stopCommand = 13;
+const char start = 14;
 
 //connection handle
 volatile bool unlock = false;

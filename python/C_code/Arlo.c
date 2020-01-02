@@ -51,20 +51,20 @@ enum State{
 };
 
 //commands
-const int def = 1;
-const int turnLeft = 2;
-const int turnRight = 3;
-const int turnAround = 6;
-const int forward = 7;
-const int backward = 8;
-const int speedUp = 9;
-const int slowDown = 10;
-const int biggerTurnAngle = 11;
-const int smallerTurnAngle = 12;
-const int biggerStep = 13;
-const int smallerStep = 14;
-const int stopCommand = 15;
-const int start = 16;
+const char def = 1;
+const char turnLeft = 2;
+const char turnRight = 3;
+const char turnAround = 4;
+const char forward = 5;
+const char backward = 6;
+const char speedUp = 7;
+const char slowDown = 8;
+const char biggerTurnAngle = 9;
+const char smallerTurnAngle = 10;
+const char biggerStep = 11;
+const char smallerStep = 12;
+const char stopCommand = 13;
+const char start = 14;
 
 //connection handle
 volatile bool unlock = false;

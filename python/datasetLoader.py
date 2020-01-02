@@ -5,6 +5,43 @@ import glob
 import re
 import cv2
 import numpy as np
+import os
+
+
+class myDataset(Dataset):
+    """hand symbols dataset."""
+
+    def __init__(self, dir, split, test=False, transform=None):
+        """
+            dir - directory to dataset
+        """
+        self.dir = dir
+        self.transform = transform
+        splitter = ""
+        if (not test):
+            splitter = '**/*[' + str(split + 1) + '-9].jpg'
+        else:
+            splitter = '**/*[0-' + str(split) + '].jpg'
+        self.pathsList = glob.glob(self.dir + splitter, recursive=True)
+
+    def __len__(self):
+        return len(self.pathsList)
+
+    def __getitem__(self, idx):
+        if torch.is_tensor(idx):
+            idx = idx.tolist()
+
+        path = self.pathsList[idx]
+        image = cv2.imread(path)
+        gesture, fileNr = os.path.basename(path).split('_')
+        nmb = int(gesture)
+        label = np.zeros(13)
+        label[nmb - 1] = 1
+        if self.transform:
+            image = cv2.flip(image, 1)
+            image = image[:, 160:640]
+            image = self.transform(image)
+        return (image, torch.tensor(label, dtype=torch.float))
 
 
 class KinectDataset(Dataset):
@@ -78,7 +115,7 @@ if __name__ == "__main__":
     import openCvTranforms.opencv_transforms.transforms as tf
 
     heigh = 60
-    width = 80
+    width = 60
 
 
     def imshow(img):
@@ -87,14 +124,15 @@ if __name__ == "__main__":
         # npimg = img.numpy()
         cv2.imshow("preview", img)
 
+
     transform = transforms.Compose(
         [tf.Resize((heigh, width)),
          tf.Grayscale(),
          tf.ToTensor(),
          tf.Normalize((0.5,), (0.5,))])
-
-    testDataset = LaRED("laRED_dataset/", split, test=True, transform=transform)
-    trainDataset = LaRED("laRED_dataset/", split, test=False, transform=transform)
+    dir = "D:/DataSetNew/"
+    testDataset = myDataset(dir, split, test=True, transform=transform)
+    trainDataset = myDataset(dir, split, test=False, transform=transform)
     print(len(testDataset))
     print(len(trainDataset))
     # for idx in range(len(dat)):

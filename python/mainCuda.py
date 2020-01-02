@@ -94,16 +94,16 @@ def train(net, epochs, startingEpoch):
 
 if __name__ == "__main__":
     # split data to test/train 0-9
-    trainStateFilename = "./savedTrainState2.pth"
-    modelFilename = "./savedMode2.pth"
-    dataSetPath = "laRED_dataset/"
-    logFile = 'model2.log'
+    trainStateFilename = "./savedTrainState3.pth"
+    modelFilename = "./savedMode3.pth"
+    dataSetPath = "D:/DataSetNew/"
+    logFile = 'model3.log'
     loadTrainData = False
     split = 1
-    width = 80
+    width = 60
     heigh = 60
     epochs = 30
-    batchSize = 32
+    batchSize = 5
     startEpoch = 0
 
     transform = transforms.Compose(
@@ -112,9 +112,9 @@ if __name__ == "__main__":
          tf.ToTensor(),
          tf.Normalize((0.5,), (0.5,))])
 
-    testLoader = LaRED(dataSetPath, split, test=True, transform=transform)
-    trainLoader = LaRED(dataSetPath, split, test=False, transform=transform)
-
+    testLoader = myDataset(dataSetPath, split, test=True, transform=transform)
+    trainLoader = myDataset(dataSetPath, split, test=False, transform=transform)
+    print("test {}, train {}".format(len(testLoader), len(trainLoader)))
     testDataset = torch.utils.data.DataLoader(testLoader,
                                               batch_size=batchSize, shuffle=False)
 

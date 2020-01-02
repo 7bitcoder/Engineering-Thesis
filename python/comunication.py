@@ -30,17 +30,16 @@ class Commands(object):
         default = 1
         turnLeft = 2
         turnRight = 3
-        turnAround = 6
-        forward = 7
-        backward = 8
-        speedUp = 9
-        slowDown = 10
-        biggerTurnAngle = 11
-        smallerTurnAngle = 12
-        biggerStep = 13
-        smallerStep = 14
-        stopCommand = 15
-        start = 16
+        turnAround = 4
+        forward = 5
+        backward = 6
+        speedUp = 7
+        slowDown = 8
+        biggerTurnAngle = 9
+        smallerTurnAngle = 10
+        biggerStep = 11
+        smallerStep = 12
+        stopCommand = 13
 
     class additionalInfo(Enum):
         empty = 1
