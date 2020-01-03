@@ -32,7 +32,7 @@ class myDataset(Dataset):
             idx = idx.tolist()
 
         path = self.pathsList[idx]
-        image = cv2.imread(path)
+        image = cv2.imread(path)#480 x 640 x3
         gesture, fileNr = os.path.basename(path).split('_')
         nmb = int(gesture)
         label = np.zeros(13)
@@ -108,7 +108,6 @@ class LaRED(Dataset):
             image = self.transform(image)
         return (image, torch.tensor(label, dtype=torch.float))
 
-
 if __name__ == "__main__":
     # test
     split = 2
@@ -119,22 +118,24 @@ if __name__ == "__main__":
 
 
     def imshow(img):
-        img = img.view(heigh, width, 1).numpy() / 2 + 0.5  # unnormalize
+        #img = img.view(3, heigh, width, 1). / 2 + 0.5  # unnormalize
         print(img.shape)
         # npimg = img.numpy()
-        cv2.imshow("preview", img)
+        cv2.imshow("preview", img.numpy())
 
 
     transform = transforms.Compose(
         [tf.Resize((heigh, width)),
-         tf.Grayscale(),
          tf.ToTensor(),
-         tf.Normalize((0.5,), (0.5,))])
+         tf.Normalize((0.5,), (0.5,))
+         ])
     dir = "D:/DataSetNew/"
     testDataset = myDataset(dir, split, test=True, transform=transform)
     trainDataset = myDataset(dir, split, test=False, transform=transform)
-    print(len(testDataset))
-    print(len(trainDataset))
+    lts = len(testDataset)
+    ltr = len(trainDataset)
+    print("test: {}, train {}".format(lts, ltr))
+    print("sum : {}, check {}".format(ltr + lts, (ltr + lts) / 13))
     # for idx in range(len(dat)):
     #   print(dat.__getitem__(idx))
 
@@ -146,10 +147,3 @@ if __name__ == "__main__":
                                               batch_size=1, shuffle=True,
                                               num_workers=4)
 
-    dataiter = iter(testLoader)
-    image, label = dataiter.next()
-    imshow(image)
-    cv2.waitKey(0)
-    print(image.shape)
-    print(image)
-    print(label)

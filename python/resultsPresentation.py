@@ -40,5 +40,6 @@ def create_acc_loss_graph(modelName):
 
 
 if __name__ == "__main__":
-    modelName = 'model3.log'
+    from mainCuda import globNr
+    modelName = 'model{}.log'.format(globNr.nr)
     create_acc_loss_graph(modelName)

@@ -10,14 +10,11 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from comunication import Commands
 from datetime import datetime
-from main import GestureRecognition, Signals
-from PyQt5.QtCore import QObject, pyqtSignal
+from main import GestureRecognition
 from PyQt5.QtCore import *
 from torch import argmax
 from time import time
-import sys
-from PyQt5.QtWidgets import QDialog, QApplication
-
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_RobotController(QObject):
 
@@ -29,8 +26,21 @@ class Ui_RobotController(QObject):
     def setupUi(self, RobotController):
         RobotController.setObjectName("RobotController")
         RobotController.resize(1400, 700)
+
+        RobotController.emergency.connect(self.emergencyStop)
+
         self.centralwidget = QtWidgets.QWidget(RobotController)
         self.centralwidget.setObjectName("centralwidget")
+
+        self.pushButton_4 = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton_4.setGeometry(QtCore.QRect(1200, 48, 80, 60))
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(15)
+        self.pushButton_4.setFont(font)
+        self.pushButton_4.setAcceptDrops(False)
+        self.pushButton_4.setObjectName("pushButton_4")
+
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton.setGeometry(QtCore.QRect(50, 590, 191, 71))
         font = QtGui.QFont()
@@ -57,15 +67,6 @@ class Ui_RobotController(QObject):
         self.pushButton_2.setFont(font)
         self.pushButton_2.setAcceptDrops(False)
         self.pushButton_2.setObjectName("pushButton_2")
-
-        self.pushButton_4 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_4.setGeometry(QtCore.QRect(1200, 48, 80, 60))
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        font.setPointSize(15)
-        self.pushButton_4.setFont(font)
-        self.pushButton_4.setAcceptDrops(False)
-        self.pushButton_4.setObjectName("pushButton_4")
 
         self.pushButton_5 = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_5.setGeometry(QtCore.QRect(900, 48, 80, 60))
@@ -297,13 +298,32 @@ class Ui_RobotController(QObject):
         self.lastCompute = index
 
 
+class MyWindow(QtWidgets.QMainWindow):
+    emergency = pyqtSignal()
+
+    def __init__(self, parent=None):
+        QtWidgets.QMainWindow.__init__(self, parent=parent)
+
+    def keyPressEvent(self, event):
+        if type(event) == QtGui.QKeyEvent:
+            if event.key() == QtCore.Qt.Key_Shift:
+                self.emergency.emit()
+
+
 if __name__ == '__main__':
     import sys
 
     ui = Ui_RobotController()
     app = QtWidgets.QApplication(sys.argv)
     app.aboutToQuit.connect(ui.closeNeuralNetworkThread)
-    window = QtWidgets.QMainWindow()
+    window = MyWindow()
     ui.setupUi(window)
     window.show()
     sys.exit(app.exec_())
+    """
+    w = MyWindow()
+    app = QtWidgets.QApplication(sys.argv)
+    app.aboutToQuit.connect(w.closeNeuralNetworkThread)
+    w.show()
+    sys.exit(app.exec_())
+    """

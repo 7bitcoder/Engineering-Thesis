@@ -62,15 +62,29 @@ if __name__ == '__main__':
         AD = "AD"
         KH = "KH"
 
-
-    ##settings
-    add = False
+    """        
+        default = 1
+        turnLeft = 2
+        turnRight = 3
+        turnAround = 4
+        forward = 5
+        backward = 6
+        speedUp = 7
+        slowDown = 8
+        biggerTurnAngle = 9
+        smallerTurnAngle = 10
+        biggerStep = 11
+        smallerStep = 12
+        stopCommand = 13
+    """
+     ##settings
+    add = True
     # if false all files in existing dir will be deleted
     saving = True
-    command = commands.stopCommand
+    command = commands.default
     pearson = pearsons.SD
     howMany = 100
-    savePerSec = 5.0
+    savePerSec = 10.0
     ##end settigns
 
     dir = r'D:\DataSetNew\{}\{}'.format(command.name, pearson.name)
@@ -83,6 +97,7 @@ if __name__ == '__main__':
         if add:
             F = open(lenfile, "r")
             file = int(F.read())
+            howMany += file
         else:
             for f in files:
                 os.remove(os.path.join(dir, f))
@@ -93,6 +108,7 @@ if __name__ == '__main__':
         print("Adding files")
     else:
         print("Old files deleted")
+    print("files: {}".format(file))
     print("Creating dataset. Gesture: {}. Pearson: {}".format(command.name, pearson.name))
     while True:
         rval, frame = device.read()

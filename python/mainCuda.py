@@ -10,15 +10,6 @@ import openCvTranforms.opencv_transforms.transforms as tf
 import torchvision.transforms as transforms
 import keyboard
 
-if torch.cuda.is_available():
-    device = torch.device("cuda:0")  # you can continue going on here, like cuda:1 cuda:2....etc.
-    print('Available gpu\'s: '+ str(torch.cuda.device_count()))
-    print("Running on the GPU")
-else:
-    device = torch.device("cpu")
-    print("Running on the CPU")
-
-
 # plot image with opencv
 def imshow(img):
     img = img / 2 + 0.5  # unnormalize
@@ -30,12 +21,12 @@ def test(length=32):
     val_acc = val_loss = 0
     for i, data in enumerate(testDataset):
         image, label = data
-        out = fwd_pass(image.view(-1, 1, heigh, width).to(device), label.to(device))
+        out = fwd_pass(image.view(-1, 3, heigh, width).to(device), label.to(device))
         val_acc += out[0]
         val_loss += out[1]
         if i == length:
             break
-    return val_acc/length, val_loss/length
+    return val_acc / length, val_loss / length
 
 
 def fwd_pass(images, labels, train=False):
@@ -58,7 +49,7 @@ def fwd_pass(images, labels, train=False):
 
 def train(net, epochs, startingEpoch):
     EPOCHS = epochs
-    #if it is already trained
+    # if it is already trained
     if startEpoch > epochs:
         return epochs + 1
 
@@ -76,13 +67,13 @@ def train(net, epochs, startingEpoch):
                     print('\aAfter this epoch training will end')
                 t.update(1)
                 images, labels = data
-                images = images.view(-1, 1, heigh, width)
+                images = images.view(-1, 3, heigh, width)
                 images, labels = images.to(device), labels.to(device)
 
                 acc, loss = fwd_pass(images, labels, train=True)
 
-                if i % 200 == 199:
-                    val_acc, val_loss = test()
+                if i % 80 == 79:
+                    val_acc, val_loss = test(64)
                     # print(val_acc, float(val_loss))
                     f.write(
                         f"{MODEL_NAME},{round(time.time(), 3)},{round(float(acc), 3)}, {round(float(loss), 4)}, {round(float(val_acc), 3)}, {round(float(val_loss), 4)}, {epoch}\n")
@@ -90,25 +81,37 @@ def train(net, epochs, startingEpoch):
             t.close()
             if exit:
                 return epoch + 1
+        return epochs + 1
+
+
+class globNr(object):
+    nr = 18
 
 
 if __name__ == "__main__":
+    if torch.cuda.is_available():
+        device = torch.device("cuda:0")  # you can continue going on here, like cuda:1 cuda:2....etc.
+        print('Available gpu\'s: ' + str(torch.cuda.device_count()))
+        print("Running on the GPU")
+    else:
+        device = torch.device("cpu")
+        print("Running on the CPU")
     # split data to test/train 0-9
-    trainStateFilename = "./savedTrainState3.pth"
-    modelFilename = "./savedMode3.pth"
+    nr = globNr.nr
+    trainStateFilename = "./savedTrainState{}.pth".format(nr)
+    modelFilename = "./savedMode{}.pth".format(nr)
     dataSetPath = "D:/DataSetNew/"
-    logFile = 'model3.log'
+    logFile = 'model{}.log'.format(nr)
     loadTrainData = False
     split = 1
     width = 60
     heigh = 60
-    epochs = 30
-    batchSize = 5
+    epochs = 10
+    batchSize = 15
     startEpoch = 0
 
     transform = transforms.Compose(
-        [tf.Scale((heigh, width)),
-         tf.Grayscale(),
+        [tf.Resize((heigh, width)),
          tf.ToTensor(),
          tf.Normalize((0.5,), (0.5,))])
 
@@ -134,10 +137,10 @@ if __name__ == "__main__":
         batchSize = state['batchSize']
         net.load_state_dict(state['state_dict'])
         optimizer.load_state_dict(state['optimizer'])
-        print('Data loaded: starting epoch: ' + str(startEpoch) + ' log File: ' + str(logFile) + ' batch size: ' + str(batchSize))
+        print('Data loaded: starting epoch: ' + str(startEpoch) + ' log File: ' + str(logFile) + ' batch size: ' + str(
+            batchSize))
     loss_function = nn.MSELoss()
     MODEL_NAME = f"model-{int(time.time())}"  # gives a dynamic model name, to just help with things getting messy over time.
-
     print("Model name: " + MODEL_NAME)
     print("test dataset size: " + str(len(testDataset)) + " train dataset size: " + str(len(trainDataset)))
     startEpoch = train(net, epochs, startEpoch)
