@@ -118,8 +118,8 @@ class GestureRecognition(QThread):
                 rval, frame = self.device.read()
                 ###
                 #rval = True
-                #command = Commands.commands.smallerStep
-                #number = 55
+                #command = Commands.commands.biggerTurnAngle
+                #number = 21
                 #frame = cv2.imread(r"D:\DataSetNew\{}\SD\{}_{}.jpg".format(command.name, command.value, number))
                 ###
                 frame = cv2.flip(frame, 1)

@@ -32,7 +32,7 @@ class myDataset(Dataset):
             idx = idx.tolist()
 
         path = self.pathsList[idx]
-        image = cv2.imread(path)#480 x 640 x3
+        image = cv2.imread(path)  # 480 x 640 x3
         gesture, fileNr = os.path.basename(path).split('_')
         nmb = int(gesture)
         label = np.zeros(13)
@@ -108,6 +108,7 @@ class LaRED(Dataset):
             image = self.transform(image)
         return (image, torch.tensor(label, dtype=torch.float))
 
+
 if __name__ == "__main__":
     # test
     split = 2
@@ -118,7 +119,7 @@ if __name__ == "__main__":
 
 
     def imshow(img):
-        #img = img.view(3, heigh, width, 1). / 2 + 0.5  # unnormalize
+        # img = img.view(3, heigh, width, 1). / 2 + 0.5  # unnormalize
         print(img.shape)
         # npimg = img.numpy()
         cv2.imshow("preview", img.numpy())
@@ -146,4 +147,3 @@ if __name__ == "__main__":
     trainLoader = torch.utils.data.DataLoader(trainDataset,
                                               batch_size=1, shuffle=True,
                                               num_workers=4)
-

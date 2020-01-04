@@ -65,7 +65,7 @@ class Commands(object):
         class commandTimes(Enum):
             """in sec"""
             sendingTime = 10
-            executingTime = 30
+            executingTime = 60
 
         def __init__(self, command, commandId, mainPtr, print):
             self.mainPtr = mainPtr

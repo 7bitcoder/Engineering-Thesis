@@ -77,14 +77,14 @@ if __name__ == '__main__':
         smallerStep = 12
         stopCommand = 13
     """
-     ##settings
+    ##settings
     add = True
     # if false all files in existing dir will be deleted
     saving = True
-    command = commands.default
-    pearson = pearsons.SD
+    command = commands.stopCommand
+    pearson = pearsons.JD
     howMany = 100
-    savePerSec = 10.0
+    savePerSec = 12.0
     ##end settigns
 
     dir = r'D:\DataSetNew\{}\{}'.format(command.name, pearson.name)
@@ -99,8 +99,7 @@ if __name__ == '__main__':
             file = int(F.read())
             howMany += file
         else:
-            for f in files:
-                os.remove(os.path.join(dir, f))
+            pass
     fullPath = dir + r'\{}_{}.jpg'
     savePerSec = 1 / savePerSec
     start = False
@@ -110,6 +109,10 @@ if __name__ == '__main__':
         print("Old files deleted")
     print("files: {}".format(file))
     print("Creating dataset. Gesture: {}. Pearson: {}".format(command.name, pearson.name))
+    check = cv2.imread("D:\DataSetNew\{}\SD\{}_1.jpg".format(command.name,command.value))
+    frameWithStats = cv2.flip(check, 1)
+    frameWithStats = drawStatistics(frameWithStats, out, 1)
+    cv2.imshow("AllImage", frameWithStats)
     while True:
         rval, frame = device.read()
         # print("time: {}".format(time()))
@@ -123,11 +126,8 @@ if __name__ == '__main__':
                 break
         # frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         frame = cv2.flip(frame, 1)
-        frameWithStats = frame.copy()
         frame = frame[:, cut:width]
-        frameWithStats = drawStatistics(frameWithStats, out, 1)
         cv2.imshow("processedImage", frame)
-        cv2.imshow("AllImage", frameWithStats)
         key = cv2.waitKey(1)
         if key == 32:
             if start:

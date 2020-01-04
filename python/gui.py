@@ -16,6 +16,7 @@ from torch import argmax
 from time import time
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_RobotController(QObject):
 
     def closeNeuralNetworkThread(self):
@@ -245,16 +246,22 @@ class Ui_RobotController(QObject):
             if not self.connectedToRobot:
                 self.print("Cannot send command, connection to robot is not established")
                 return
+            command = recognized
             if recognized is None:
                 if self.comboBox.currentIndex() == 0:
                     pass
                 else:
                     self.print(self.comboBox.currentData())
                     command = self.commands.commands(int(self.comboBox.currentData()))
-                    self.commands.executeCommand(command)
                     self.comboBox.setCurrentIndex(0)
+            if command == self.commands.commands.default:
+                pass
+            elif command == self.commands.commands.stopCommand:
+                self.emergencyStop()
+            elif command.value < self.commands.commands.speedUp and self.commands.watchDog:  # acvive command not settings
+                self.print("Cannot send command, one is already in execution: {}".format(self.commands.watchDog[0].command.name))
             else:
-                self.commands.executeCommand(recognized)
+                self.commands.executeCommand(command)
         except Exception as e:
             self.print(e)
         finally:

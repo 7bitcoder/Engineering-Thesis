@@ -10,6 +10,7 @@ import openCvTranforms.opencv_transforms.transforms as tf
 import torchvision.transforms as transforms
 import keyboard
 
+
 # plot image with opencv
 def imshow(img):
     img = img / 2 + 0.5  # unnormalize
@@ -85,7 +86,7 @@ def train(net, epochs, startingEpoch):
 
 
 class globNr(object):
-    nr = 18
+    nr = 19
 
 
 if __name__ == "__main__":
@@ -102,7 +103,7 @@ if __name__ == "__main__":
     modelFilename = "./savedMode{}.pth".format(nr)
     dataSetPath = "D:/DataSetNew/"
     logFile = 'model{}.log'.format(nr)
-    loadTrainData = False
+    loadTrainData = True
     split = 1
     width = 60
     heigh = 60
@@ -119,7 +120,7 @@ if __name__ == "__main__":
     trainLoader = myDataset(dataSetPath, split, test=False, transform=transform)
     print("test {}, train {}".format(len(testLoader), len(trainLoader)))
     testDataset = torch.utils.data.DataLoader(testLoader,
-                                              batch_size=batchSize, shuffle=False)
+                                              batch_size=batchSize, shuffle=True)
 
     trainDataset = torch.utils.data.DataLoader(trainLoader,
                                                batch_size=batchSize, shuffle=True)
@@ -130,7 +131,7 @@ if __name__ == "__main__":
     if loadTrainData:
         print('Loading saved Training State')
         state = torch.load(trainStateFilename)
-        if [epochs, split, width, heigh] != [state['epoch'], state['split'], state['width'], state['height']]:
+        if [split, width, heigh] != [state['split'], state['width'], state['height']]:
             raise Exception('Load Training data differ from actual')
         startEpoch = state['startEpoch']
         logFile = state['logFile']

@@ -3,13 +3,13 @@
   <component name="ChangeListManager">
     <list default="true" id="615a3f95-0aa8-4c67-870f-1878902a0950" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/comunication.py" beforeDir="false" afterPath="$PROJECT_DIR$/comunication.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/datasetLoader.py" beforeDir="false" afterPath="$PROJECT_DIR$/datasetLoader.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gestureRecorder.py" beforeDir="false" afterPath="$PROJECT_DIR$/gestureRecorder.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gui.py" beforeDir="false" afterPath="$PROJECT_DIR$/gui.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/mainCuda.py" beforeDir="false" afterPath="$PROJECT_DIR$/mainCuda.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/neuralNetwork.py" beforeDir="false" afterPath="$PROJECT_DIR$/neuralNetwork.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resultsPresentation.py" beforeDir="false" afterPath="$PROJECT_DIR$/resultsPresentation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model18.log" beforeDir="false" afterPath="$PROJECT_DIR$/model18.log" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -37,7 +37,7 @@
     <property name="last_opened_file_path" value="$USER_HOME$/Desktop/Bazy Danych/Tier &amp; Tidy/Analysis Data" />
     <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
   </component>
-  <component name="RunManager" selected="Python.mainCuda">
+  <component name="RunManager" selected="Python.gui">
     <configuration name="datasetLoader" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="python" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -145,11 +145,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.gui" />
+        <item itemvalue="Python.resultsPresentation" />
         <item itemvalue="Python.mainCuda" />
         <item itemvalue="Python.datasetLoader" />
         <item itemvalue="Python.gestureRecorder" />
-        <item itemvalue="Python.gui" />
-        <item itemvalue="Python.resultsPresentation" />
       </list>
     </recent_temporary>
   </component>
@@ -192,22 +192,22 @@
     </option>
   </component>
   <component name="WindowStateProjectService">
-    <state width="1515" height="213" key="GridCell.Tab.0.bottom" timestamp="1578064218840">
+    <state width="1515" height="213" key="GridCell.Tab.0.bottom" timestamp="1578141435025">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1515" height="213" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1578064218840" />
-    <state width="1515" height="213" key="GridCell.Tab.0.center" timestamp="1578064218840">
+    <state width="1515" height="213" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1578141435025" />
+    <state width="1515" height="213" key="GridCell.Tab.0.center" timestamp="1578141435024">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1515" height="213" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1578064218840" />
-    <state width="1515" height="213" key="GridCell.Tab.0.left" timestamp="1578064218840">
+    <state width="1515" height="213" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1578141435024" />
+    <state width="1515" height="213" key="GridCell.Tab.0.left" timestamp="1578141435024">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1515" height="213" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1578064218840" />
-    <state width="1515" height="213" key="GridCell.Tab.0.right" timestamp="1578064218840">
+    <state width="1515" height="213" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1578141435024" />
+    <state width="1515" height="213" key="GridCell.Tab.0.right" timestamp="1578141435025">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1515" height="213" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1578064218840" />
+    <state width="1515" height="213" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1578141435025" />
     <state width="1515" height="215" key="GridCell.Tab.1.bottom" timestamp="1578007966635">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
@@ -228,17 +228,17 @@
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="277" y="55" key="SettingsEditor/0.0.1536.824@0.0.1536.824" timestamp="1577896183879" />
-    <state x="431" y="145" width="672" height="678" key="search.everywhere.popup" timestamp="1577903904298">
+    <state x="431" y="145" width="672" height="678" key="search.everywhere.popup" timestamp="1578145587850">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="431" y="145" width="672" height="678" key="search.everywhere.popup/0.0.1536.824@0.0.1536.824" timestamp="1577903904298" />
+    <state x="431" y="145" width="672" height="678" key="search.everywhere.popup/0.0.1536.824@0.0.1536.824" timestamp="1578145587850" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/mainCuda.py</url>
-          <line>82</line>
+          <line>83</line>
           <option name="timeStamp" value="49" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -253,7 +253,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/datasetLoader.py</url>
-          <line>120</line>
+          <line>121</line>
           <option name="timeStamp" value="60" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -263,7 +263,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/gestureRecorder.py</url>
-          <line>129</line>
+          <line>126</line>
           <option name="timeStamp" value="64" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -273,17 +273,17 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/gestureRecorder.py</url>
-          <line>111</line>
+          <line>110</line>
           <option name="timeStamp" value="66" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/mainCuda.py</url>
-          <line>38</line>
+          <line>39</line>
           <option name="timeStamp" value="68" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/mainCuda.py</url>
-          <line>68</line>
+          <line>69</line>
           <option name="timeStamp" value="69" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -293,7 +293,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/mainCuda.py</url>
-          <line>142</line>
+          <line>143</line>
           <option name="timeStamp" value="78" />
         </line-breakpoint>
       </breakpoints>
