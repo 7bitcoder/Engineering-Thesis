@@ -224,6 +224,7 @@ class BleComunicator(object):
                 self.signals.lock.emit(1)
                 x = await client.is_connected()
                 self.print("Connected to mobile robot")
+                self.print(self.secourityCode)
                 await client.write_gatt_char(self.uartUUID, self.secourityCode)
                 await client.start_notify(self.uartUUID, self.getData)
                 self.timer = threading.Timer(10, self.secourityCodeTimeUp)
@@ -238,6 +239,7 @@ class BleComunicator(object):
         except Exception as e:
             self.print("An exception occurred: " + str(e))
         finally:
+            self.timer.cancel()
             self.print("Communicator closed")
             self.signals.lock.emit(2)
             self.disc = False
