@@ -4,10 +4,8 @@
     <list default="true" id="615a3f95-0aa8-4c67-870f-1878902a0950" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/datasetLoader.py" beforeDir="false" afterPath="$PROJECT_DIR$/datasetLoader.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gestureRecorder.py" beforeDir="false" afterPath="$PROJECT_DIR$/gestureRecorder.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/mainCuda.py" beforeDir="false" afterPath="$PROJECT_DIR$/mainCuda.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/neuralNetwork.py" beforeDir="false" afterPath="$PROJECT_DIR$/neuralNetwork.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/openCvTranforms/opencv_transforms/transforms.py" beforeDir="false" afterPath="$PROJECT_DIR$/openCvTranforms/opencv_transforms/transforms.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resultsPresentation.py" beforeDir="false" afterPath="$PROJECT_DIR$/resultsPresentation.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -36,7 +34,7 @@
     <property name="last_opened_file_path" value="$USER_HOME$/Desktop/Bazy Danych/Tier &amp; Tidy/Analysis Data" />
     <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
   </component>
-  <component name="RunManager" selected="Python.mainCuda">
+  <component name="RunManager" selected="Python.gui">
     <configuration name="datasetLoader" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="python" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -144,9 +142,9 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.gui" />
         <item itemvalue="Python.mainCuda" />
         <item itemvalue="Python.resultsPresentation" />
-        <item itemvalue="Python.gui" />
         <item itemvalue="Python.datasetLoader" />
         <item itemvalue="Python.gestureRecorder" />
       </list>
@@ -191,38 +189,38 @@
     </option>
   </component>
   <component name="WindowStateProjectService">
-    <state width="1515" height="213" key="GridCell.Tab.0.bottom" timestamp="1578235721767">
+    <state width="1515" height="213" key="GridCell.Tab.0.bottom" timestamp="1578262662522">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1515" height="213" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1578235721767" />
-    <state width="1515" height="213" key="GridCell.Tab.0.center" timestamp="1578235721766">
+    <state width="1515" height="213" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1578262662522" />
+    <state width="1515" height="213" key="GridCell.Tab.0.center" timestamp="1578262662521">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1515" height="213" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1578235721766" />
-    <state width="1515" height="213" key="GridCell.Tab.0.left" timestamp="1578235721766">
+    <state width="1515" height="213" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1578262662521" />
+    <state width="1515" height="213" key="GridCell.Tab.0.left" timestamp="1578262662521">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1515" height="213" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1578235721766" />
-    <state width="1515" height="213" key="GridCell.Tab.0.right" timestamp="1578235721766">
+    <state width="1515" height="213" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1578262662521" />
+    <state width="1515" height="213" key="GridCell.Tab.0.right" timestamp="1578262662522">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1515" height="213" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1578235721766" />
-    <state width="1515" height="215" key="GridCell.Tab.1.bottom" timestamp="1578222289574">
+    <state width="1515" height="213" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1578262662521" />
+    <state width="1515" height="215" key="GridCell.Tab.1.bottom" timestamp="1578236210241">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1515" height="215" key="GridCell.Tab.1.bottom/0.0.1536.824@0.0.1536.824" timestamp="1578222289574" />
-    <state width="1515" height="215" key="GridCell.Tab.1.center" timestamp="1578222289574">
+    <state width="1515" height="215" key="GridCell.Tab.1.bottom/0.0.1536.824@0.0.1536.824" timestamp="1578236210241" />
+    <state width="1515" height="215" key="GridCell.Tab.1.center" timestamp="1578236210241">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1515" height="215" key="GridCell.Tab.1.center/0.0.1536.824@0.0.1536.824" timestamp="1578222289574" />
-    <state width="1515" height="215" key="GridCell.Tab.1.left" timestamp="1578222289573">
+    <state width="1515" height="215" key="GridCell.Tab.1.center/0.0.1536.824@0.0.1536.824" timestamp="1578236210241" />
+    <state width="1515" height="215" key="GridCell.Tab.1.left" timestamp="1578236210241">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1515" height="215" key="GridCell.Tab.1.left/0.0.1536.824@0.0.1536.824" timestamp="1578222289573" />
-    <state width="1515" height="215" key="GridCell.Tab.1.right" timestamp="1578222289574">
+    <state width="1515" height="215" key="GridCell.Tab.1.left/0.0.1536.824@0.0.1536.824" timestamp="1578236210241" />
+    <state width="1515" height="215" key="GridCell.Tab.1.right" timestamp="1578236210241">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1515" height="215" key="GridCell.Tab.1.right/0.0.1536.824@0.0.1536.824" timestamp="1578222289574" />
+    <state width="1515" height="215" key="GridCell.Tab.1.right/0.0.1536.824@0.0.1536.824" timestamp="1578236210241" />
     <state x="277" y="55" key="SettingsEditor" timestamp="1577896183879">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
@@ -231,17 +229,17 @@
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="341" y="149" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.0.1536.824@0.0.1536.824" timestamp="1578227228017" />
-    <state x="431" y="145" width="672" height="678" key="search.everywhere.popup" timestamp="1578145587850">
+    <state x="431" y="145" width="672" height="678" key="search.everywhere.popup" timestamp="1578258534747">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="431" y="145" width="672" height="678" key="search.everywhere.popup/0.0.1536.824@0.0.1536.824" timestamp="1578145587850" />
+    <state x="431" y="145" width="672" height="678" key="search.everywhere.popup/0.0.1536.824@0.0.1536.824" timestamp="1578258534747" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/mainCuda.py</url>
-          <line>87</line>
+          <line>102</line>
           <option name="timeStamp" value="49" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -276,12 +274,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/mainCuda.py</url>
-          <line>40</line>
+          <line>55</line>
           <option name="timeStamp" value="68" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/mainCuda.py</url>
-          <line>72</line>
+          <line>87</line>
           <option name="timeStamp" value="69" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -291,12 +289,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/mainCuda.py</url>
-          <line>156</line>
+          <line>175</line>
           <option name="timeStamp" value="78" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/datasetLoader.py</url>
-          <line>154</line>
+          <line>159</line>
           <option name="timeStamp" value="80" />
         </line-breakpoint>
       </breakpoints>

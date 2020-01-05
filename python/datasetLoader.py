@@ -6,22 +6,27 @@ import re
 import cv2
 import numpy as np
 import os
+import random
 
 
 class myDataset(Dataset):
     """hand symbols dataset."""
 
-    def __init__(self, dir, split, test=False, transform=None):
+    def __init__(self, dir, split, test=False, train=False, validation=False, transform=None):
         """
             dir - directory to dataset
         """
         self.dir = dir
         self.transform = transform
         splitter = ""
-        if (not test):
-            splitter = '**/*[' + str(split + 1) + '-9].jpg'
+        if test:
+            splitter = '**/*0.jpg'
+        elif train:
+            splitter = '**/*[2-9].jpg'
+        elif validation:
+            splitter = '**/*1.jpg'
         else:
-            splitter = '**/*[0-' + str(split) + '].jpg'
+            raise Exception("chose one of train/test/validation")
         self.pathsList = glob.glob(self.dir + splitter, recursive=True)
 
     def __len__(self):
@@ -125,13 +130,13 @@ if __name__ == "__main__":
         cv2.imshow("preview", img)
 
 
-    transform = transforms.Compose(
-        [tf.RandomCrop([400, 400]),
-         tf.Resize((heigh, width)),
-         tf.ColorJitter(brightness=0.5, contrast=0.5),
-         tf.ToTensor(),
-         tf.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
-         ])
+    transform = transforms.Compose([
+        tf.myRandomCrop(380, 480),
+        tf.Resize((heigh, width)),
+        tf.ColorJitter(brightness=0.5, contrast=0.5),
+        tf.ToTensor(),
+        tf.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+    ])
     dir = "D:/DataSetNew/"
     testDataset = myDataset(dir, split, test=True, transform=transform)
     trainDataset = myDataset(dir, split, test=False, transform=transform)
@@ -147,7 +152,7 @@ if __name__ == "__main__":
                                              num_workers=4)
 
     trainLoader = torch.utils.data.DataLoader(trainDataset,
-                                              batch_size=1, shuffle=False,
+                                              batch_size=1, shuffle=True,
                                               num_workers=4)
 
     for data in trainLoader:

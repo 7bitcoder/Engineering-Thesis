@@ -19,15 +19,30 @@ def imshow(img):
     cv2.imshow(np.transpose(npimg, (1, 2, 0)))
 
 
-def test(length=32):
+def validate(length=32):
     val_acc = val_loss = 0
-    for i, data in enumerate(testDataset):
+    for i, data in enumerate(validateDataset):
         image, label = data
         out = fwd_pass(image.view(-1, 3, heigh, width).to(device), label.to(device))
         val_acc += out[0]
         val_loss += out[1]
-        if i == length:
+        if i == length - 1:
             break
+    return val_acc / length, val_loss / length
+
+
+def test():
+    val_acc = val_loss = 0
+    print("running test")
+    t = tqdm(total=len(trainDataset))  # Initialise
+    for i, data in enumerate(testDataset):
+        t.update(1)
+        image, label = data
+        out = fwd_pass(image.view(-1, 3, heigh, width).to(device), label.to(device))
+        val_acc += out[0]
+        val_loss += out[1]
+    t.close()
+    length = len(testDataset)
     return val_acc / length, val_loss / length
 
 
@@ -76,8 +91,8 @@ def train(net, epochs, startingEpoch):
 
                 acc, loss = fwd_pass(images, labels, train=True)
 
-                if i % 100 == 99:
-                    val_acc, val_loss = test()
+                if i % 200 == 199:
+                    val_acc, val_loss = validate(64)
                     # print(val_acc, float(val_loss))
                     f.write(
                         f"{MODEL_NAME},{round(time.time(), 3)},{round(float(acc), 3)}, {round(float(loss), 4)}, {round(float(val_acc), 3)}, {round(float(val_loss), 4)}, {epoch}\n")
@@ -90,7 +105,7 @@ def train(net, epochs, startingEpoch):
 
 
 class globNr(object):
-    nr = 21
+    nr = 26
 
 
 if __name__ == "__main__":
@@ -111,8 +126,8 @@ if __name__ == "__main__":
     split = 1
     width = 60
     heigh = 60
-    epochs = 10
-    batchSize = 30
+    epochs = 14
+    batchSize = 16
     startEpoch = 0
     drawing = False
 
@@ -123,20 +138,24 @@ if __name__ == "__main__":
     ])
 
     trainTransform = transforms.Compose([
-        tf.RandomCrop([400, 400]),
+        tf.myRandomCrop(380, 480),
         tf.Resize((heigh, width)),
         tf.ColorJitter(brightness=0.5, contrast=0.5),
         tf.ToTensor(),
         tf.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
     ])
     testLoader = myDataset(dataSetPath, split, test=True, transform=transform)
-    trainLoader = myDataset(dataSetPath, split, test=False, transform=trainTransform)
-    print("test {}, train {}".format(len(testLoader), len(trainLoader)))
+    trainLoader = myDataset(dataSetPath, split, train=True, transform=trainTransform)
+    validateLoader = myDataset(dataSetPath, split, validation=True, transform=trainTransform)
+    print("test {}, train {}, val {}".format(len(testLoader), len(trainLoader), len(validateLoader)))
     testDataset = torch.utils.data.DataLoader(testLoader,
-                                              batch_size=batchSize, shuffle=True)
+                                              batch_size=batchSize)
 
     trainDataset = torch.utils.data.DataLoader(trainLoader,
                                                batch_size=batchSize, shuffle=True)
+
+    validateDataset = torch.utils.data.DataLoader(trainLoader,
+                                                  batch_size=batchSize, shuffle=True)
 
     net = Net(width, heigh).to(device)
     optimizer = optim.Adam(net.parameters(), lr=0.001)
@@ -156,8 +175,12 @@ if __name__ == "__main__":
     loss_function = nn.MSELoss()
     MODEL_NAME = f"model-{int(time.time())}"  # gives a dynamic model name, to just help with things getting messy over time.
     print("Model name: " + MODEL_NAME)
-    print("test dataset size: " + str(len(testDataset)) + " train dataset size: " + str(len(trainDataset)))
+    print("test dataset size: {}, train dataset size: {}, validation dataset size: {}".format(len(testDataset),
+                                                                                              len(trainDataset),
+                                                                                              len(validateDataset)))
     startEpoch = train(net, epochs, startEpoch)
+    acc, loss = test()
+    print("Test (average): acc: {}%, loss: {}".format(acc * 100, loss))
     state = {
         'logFile': logFile,
         'epoch': epochs,
