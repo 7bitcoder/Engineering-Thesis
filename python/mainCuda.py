@@ -9,6 +9,7 @@ from datasetLoader import *
 import openCvTranforms.opencv_transforms.transforms as tf
 import torchvision.transforms as transforms
 import keyboard
+from resultsPresentation import updating
 
 
 # plot image with opencv
@@ -54,6 +55,8 @@ def train(net, epochs, startingEpoch):
     if startEpoch > epochs:
         return epochs + 1
 
+    plot = updating()
+
     with open(logFile, "a") as f:
         for epoch in range(startingEpoch, EPOCHS):
             print("\aepoch: " + str(epoch))
@@ -73,11 +76,12 @@ def train(net, epochs, startingEpoch):
 
                 acc, loss = fwd_pass(images, labels, train=True)
 
-                if i % 80 == 79:
-                    val_acc, val_loss = test(64)
+                if i % 100 == 99:
+                    val_acc, val_loss = test()
                     # print(val_acc, float(val_loss))
                     f.write(
                         f"{MODEL_NAME},{round(time.time(), 3)},{round(float(acc), 3)}, {round(float(loss), 4)}, {round(float(val_acc), 3)}, {round(float(val_loss), 4)}, {epoch}\n")
+                    plot.update(acc, loss, val_acc, val_loss)
                 i += 1
             t.close()
             if exit:
@@ -86,7 +90,7 @@ def train(net, epochs, startingEpoch):
 
 
 class globNr(object):
-    nr = 19
+    nr = 21
 
 
 if __name__ == "__main__":
@@ -103,21 +107,30 @@ if __name__ == "__main__":
     modelFilename = "./savedMode{}.pth".format(nr)
     dataSetPath = "D:/DataSetNew/"
     logFile = 'model{}.log'.format(nr)
-    loadTrainData = True
+    loadTrainData = False
     split = 1
     width = 60
     heigh = 60
     epochs = 10
-    batchSize = 15
+    batchSize = 30
     startEpoch = 0
+    drawing = False
 
-    transform = transforms.Compose(
-        [tf.Resize((heigh, width)),
-         tf.ToTensor(),
-         tf.Normalize((0.5,), (0.5,))])
+    transform = transforms.Compose([
+        tf.Resize((heigh, width)),
+        tf.ToTensor(),
+        tf.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+    ])
 
+    trainTransform = transforms.Compose([
+        tf.RandomCrop([400, 400]),
+        tf.Resize((heigh, width)),
+        tf.ColorJitter(brightness=0.5, contrast=0.5),
+        tf.ToTensor(),
+        tf.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+    ])
     testLoader = myDataset(dataSetPath, split, test=True, transform=transform)
-    trainLoader = myDataset(dataSetPath, split, test=False, transform=transform)
+    trainLoader = myDataset(dataSetPath, split, test=False, transform=trainTransform)
     print("test {}, train {}".format(len(testLoader), len(trainLoader)))
     testDataset = torch.utils.data.DataLoader(testLoader,
                                               batch_size=batchSize, shuffle=True)

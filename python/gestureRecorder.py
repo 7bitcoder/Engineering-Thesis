@@ -6,6 +6,7 @@ import os
 from time import time
 from enum import Enum
 from comunication import Commands
+
 if __name__ == '__main__':
 
     device = cv2.VideoCapture(0, cv2.CAP_DSHOW)
@@ -62,6 +63,7 @@ if __name__ == '__main__':
         AD = "AD"
         KH = "KH"
 
+
     """        
         default = 1
         turnLeft = 2
@@ -81,8 +83,8 @@ if __name__ == '__main__':
     add = True
     # if false all files in existing dir will be deleted
     saving = True
-    command = commands.stopCommand
-    pearson = pearsons.JD
+    command = commands.slowDown
+    pearson = pearsons.KH
     howMany = 100
     savePerSec = 12.0
     ##end settigns
@@ -109,7 +111,7 @@ if __name__ == '__main__':
         print("Old files deleted")
     print("files: {}".format(file))
     print("Creating dataset. Gesture: {}. Pearson: {}".format(command.name, pearson.name))
-    check = cv2.imread("D:\DataSetNew\{}\SD\{}_1.jpg".format(command.name,command.value))
+    check = cv2.imread("D:\DataSetNew\{}\SD\{}_1.jpg".format(command.name, command.value))
     frameWithStats = cv2.flip(check, 1)
     frameWithStats = drawStatistics(frameWithStats, out, 1)
     cv2.imshow("AllImage", frameWithStats)

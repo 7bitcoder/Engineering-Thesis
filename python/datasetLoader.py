@@ -114,21 +114,23 @@ if __name__ == "__main__":
     split = 2
     import openCvTranforms.opencv_transforms.transforms as tf
 
-    heigh = 60
-    width = 60
+    heigh = 200
+    width = 200
 
 
     def imshow(img):
-        # img = img.view(3, heigh, width, 1). / 2 + 0.5  # unnormalize
+        img = img[0].permute(1, 2, 0).numpy() / 2 + 0.5
+        # img = img.view(heigh, width, 3).numpy()   # unnormalize
         print(img.shape)
-        # npimg = img.numpy()
-        cv2.imshow("preview", img.numpy())
+        cv2.imshow("preview", img)
 
 
     transform = transforms.Compose(
-        [tf.Resize((heigh, width)),
+        [tf.RandomCrop([400, 400]),
+         tf.Resize((heigh, width)),
+         tf.ColorJitter(brightness=0.5, contrast=0.5),
          tf.ToTensor(),
-         tf.Normalize((0.5,), (0.5,))
+         tf.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
          ])
     dir = "D:/DataSetNew/"
     testDataset = myDataset(dir, split, test=True, transform=transform)
@@ -145,5 +147,10 @@ if __name__ == "__main__":
                                              num_workers=4)
 
     trainLoader = torch.utils.data.DataLoader(trainDataset,
-                                              batch_size=1, shuffle=True,
+                                              batch_size=1, shuffle=False,
                                               num_workers=4)
+
+    for data in trainLoader:
+        images, labels = data
+        imshow(images)
+        cv2.waitKey(0)

@@ -52,7 +52,7 @@ class GestureRecognition(QThread):
         self.transform = transforms.Compose([
             tf.Resize((self.heigh, self.width)),
             tf.ToTensor(),
-            tf.Normalize((0.5,), (0.5,))
+            tf.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
         ])
         self.signals = Signals()
         self.running = True
