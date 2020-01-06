@@ -66,8 +66,8 @@ def create_acc_loss_graph(modelName):
 
     ax1.plot(times, accuracies, label="Training accuracy")
     ax1.plot(times, val_accs, label="Sample test accuracy")
-    ax1.legend(loc=2)
-    ax1.set(xlabel='Iteration', ylabel='Accuracy in %')
+    ax1.legend(loc=3)
+    ax1.set(xlabel='Iteration', ylabel='Accuracy [%]')
     ax2.plot(times, losses, label="Training loss")
     ax2.plot(times, val_losses, label="Test loss")
     ax2.legend(loc=2)
@@ -78,5 +78,5 @@ def create_acc_loss_graph(modelName):
 if __name__ == "__main__":
     from mainCuda import globNr
 
-    modelName = 'model{}.log'.format(22)
+    modelName = 'model{}.log'.format(globNr.nr)
     create_acc_loss_graph(modelName)
