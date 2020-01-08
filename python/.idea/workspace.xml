@@ -3,8 +3,15 @@
   <component name="ChangeListManager">
     <list default="true" id="615a3f95-0aa8-4c67-870f-1878902a0950" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/C_code/Arlo.c" beforeDir="false" afterPath="$PROJECT_DIR$/C_code/Arlo.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/C_code/arduinoTestCode/ATcommands/ATcommands.ino" beforeDir="false" afterPath="$PROJECT_DIR$/C_code/arduinoTestCode/ATcommands/ATcommands.ino" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/C_code/arduinoTestCode/arduinoTestCode.ino" beforeDir="false" afterPath="$PROJECT_DIR$/C_code/arduinoTestCode/arduinoTestCode.ino" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/C_code/cmm/Arlo.binary" beforeDir="false" afterPath="$PROJECT_DIR$/C_code/cmm/Arlo.binary" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/C_code/cmm/Arlo.elf" beforeDir="false" afterPath="$PROJECT_DIR$/C_code/cmm/Arlo.elf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/comunication.py" beforeDir="false" afterPath="$PROJECT_DIR$/comunication.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/comunicationTest.py" beforeDir="false" afterPath="$PROJECT_DIR$/comunicationTest.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gui.py" beforeDir="false" afterPath="$PROJECT_DIR$/mainApplication.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/openCvTranforms/opencv_transforms/transforms.py" beforeDir="false" afterPath="$PROJECT_DIR$/openCvTranforms/opencv_transforms/transforms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resultsPresentation.py" beforeDir="false" afterPath="$PROJECT_DIR$/resultsPresentation.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -32,8 +39,8 @@
     <property name="last_opened_file_path" value="$USER_HOME$/Desktop/Bazy Danych/Tier &amp; Tidy/Analysis Data" />
     <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
   </component>
-  <component name="RunManager" selected="Python.resultsPresentation">
-    <configuration name="datasetLoader" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Python.mainApplication">
+    <configuration name="comunicationTest" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="python" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -45,28 +52,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/datasetLoader.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="gestureRecorder" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="python" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/gestureRecorder.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/comunicationTest.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -87,7 +73,28 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/gui.py" />
+      <option name="SCRIPT_NAME" value="C:\Users\Sylwester\source\Praca inżynierska\Engineering-Thesis\python\mainApplication.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="mainApplication" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="python" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/mainApplication.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -140,11 +147,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.mainApplication" />
+        <item itemvalue="Python.comunicationTest" />
         <item itemvalue="Python.resultsPresentation" />
         <item itemvalue="Python.gui" />
         <item itemvalue="Python.mainCuda" />
-        <item itemvalue="Python.datasetLoader" />
-        <item itemvalue="Python.gestureRecorder" />
       </list>
     </recent_temporary>
   </component>
@@ -187,38 +194,38 @@
     </option>
   </component>
   <component name="WindowStateProjectService">
-    <state width="1515" height="213" key="GridCell.Tab.0.bottom" timestamp="1578340837812">
+    <state width="1515" height="213" key="GridCell.Tab.0.bottom" timestamp="1578488423485">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1515" height="213" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1578340837812" />
-    <state width="1515" height="213" key="GridCell.Tab.0.center" timestamp="1578340837812">
+    <state width="1515" height="213" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1578488423485" />
+    <state width="1515" height="213" key="GridCell.Tab.0.center" timestamp="1578488423485">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1515" height="213" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1578340837812" />
-    <state width="1515" height="213" key="GridCell.Tab.0.left" timestamp="1578340837812">
+    <state width="1515" height="213" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1578488423485" />
+    <state width="1515" height="213" key="GridCell.Tab.0.left" timestamp="1578488423485">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1515" height="213" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1578340837812" />
-    <state width="1515" height="213" key="GridCell.Tab.0.right" timestamp="1578340837812">
+    <state width="1515" height="213" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1578488423485" />
+    <state width="1515" height="213" key="GridCell.Tab.0.right" timestamp="1578488423485">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1515" height="213" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1578340837812" />
-    <state width="1515" height="215" key="GridCell.Tab.1.bottom" timestamp="1578236210241">
+    <state width="1515" height="213" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1578488423485" />
+    <state width="1515" height="215" key="GridCell.Tab.1.bottom" timestamp="1578439457421">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1515" height="215" key="GridCell.Tab.1.bottom/0.0.1536.824@0.0.1536.824" timestamp="1578236210241" />
-    <state width="1515" height="215" key="GridCell.Tab.1.center" timestamp="1578236210241">
+    <state width="1515" height="215" key="GridCell.Tab.1.bottom/0.0.1536.824@0.0.1536.824" timestamp="1578439457421" />
+    <state width="1515" height="215" key="GridCell.Tab.1.center" timestamp="1578439457421">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1515" height="215" key="GridCell.Tab.1.center/0.0.1536.824@0.0.1536.824" timestamp="1578236210241" />
-    <state width="1515" height="215" key="GridCell.Tab.1.left" timestamp="1578236210241">
+    <state width="1515" height="215" key="GridCell.Tab.1.center/0.0.1536.824@0.0.1536.824" timestamp="1578439457421" />
+    <state width="1515" height="215" key="GridCell.Tab.1.left" timestamp="1578439457421">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1515" height="215" key="GridCell.Tab.1.left/0.0.1536.824@0.0.1536.824" timestamp="1578236210241" />
-    <state width="1515" height="215" key="GridCell.Tab.1.right" timestamp="1578236210241">
+    <state width="1515" height="215" key="GridCell.Tab.1.left/0.0.1536.824@0.0.1536.824" timestamp="1578439457421" />
+    <state width="1515" height="215" key="GridCell.Tab.1.right" timestamp="1578439457421">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1515" height="215" key="GridCell.Tab.1.right/0.0.1536.824@0.0.1536.824" timestamp="1578236210241" />
+    <state width="1515" height="215" key="GridCell.Tab.1.right/0.0.1536.824@0.0.1536.824" timestamp="1578439457421" />
     <state x="277" y="55" key="SettingsEditor" timestamp="1577896183879">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
@@ -281,11 +288,6 @@
           <option name="timeStamp" value="69" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/main.py</url>
-          <line>128</line>
-          <option name="timeStamp" value="77" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/mainCuda.py</url>
           <line>175</line>
           <option name="timeStamp" value="78" />
@@ -294,6 +296,21 @@
           <url>file://$PROJECT_DIR$/datasetLoader.py</url>
           <line>159</line>
           <option name="timeStamp" value="80" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/mainApplication.py</url>
+          <line>263</line>
+          <option name="timeStamp" value="81" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/mainApplication.py</url>
+          <line>257</line>
+          <option name="timeStamp" value="82" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/mainApplication.py</url>
+          <line>251</line>
+          <option name="timeStamp" value="83" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>

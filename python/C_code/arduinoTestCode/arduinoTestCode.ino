@@ -5,11 +5,10 @@
 */
 #include "SoftwareSerial.h"
 
-SoftwareSerial ble(2, 4); // RX | TX
-#define INTERRUPT 3
+SoftwareSerial ble(3, 4); // RX | TX
+SoftwareSerial arlo(5, 6); // RX | TX
+#define INTERRUPT 2
 #define LOCKLED 12
-#define Rx 2
-#define Tx 4
 #define false 0
 #define true 1
 #define halfTurn 500
@@ -29,7 +28,7 @@ const char robotError = 5;
 const char RobotReady = 6;
 const char accessDenyed = 7;
 
-const char* secourityCode = "QV9GVE3SYFJ8768CCNL";
+const char* secourityCode = "QV9";
 //comunication data
 char messageId = 1;
 int gotBytes = 0;
@@ -92,7 +91,7 @@ const int maxTurn = halfTurn; //180 deg
 const int minTurn = halfTurn / 18; //10 deg
 //default
 int step = halfTurn;
-int speed = 30;
+int speed = 50;
 int turn = halfTurn / 4;
 
 int left = 0;
@@ -132,26 +131,19 @@ void show() {
   Serial.println(formatBuff);
 }
 unsigned long beg = 0;
-void drive_speed(int, int);
-void drive_getTicks(int * l, int * r) {          // Get encoder measurements
-  unsigned long end = millis() - beg;
-  end /= 10;
-  *l = *r = end;
-  Serial.println(end);
-}
-void drive_getSpeed(int * l, int * r) {};
-void drive_feedback(int x) {};
-void drive_clearTicks() {
-  beg = millis();
-};
+void drive_speed(int left, int right, int endD);
 void setup()
 {
   pinMode(LOCKLED, OUTPUT);
   digitalWrite(LOCKLED, LOW);
   Serial.begin(115200);
   Serial.println("Robot Started");
+  ble.begin(2400); // set HM10 serial at 9600 baud rate
+  char c = '?';
+  //arlo.begin(9600);
+  while(c == '?')
+    c = arlo.read();
   Serial.println("yes started");
-  ble.begin(9600); // set HM10 serial at 9600 baud rate
   attachInterrupt(digitalPinToInterrupt(INTERRUPT), interrupt, RISING);
 }
 
@@ -159,15 +151,10 @@ void loop()
 {
   if (newConnection) { // new connection, check it!!
     unlock = checkNewConnection();
-    disconnected = false;
     if (unlock)
       digitalWrite(LOCKLED, LOW);
     else //if connection is wrong then set lock led
       digitalWrite(LOCKLED, HIGH);
-  }
-  else if (disconnected && unlock) { //if disconnected lock devide
-    stop();
-    unlock = false;
   }
   if (unlock) {
     readData();
@@ -183,7 +170,7 @@ bool checkNewConnection() {
   Serial.println("eg11111!!!!!!");
   int i = 0;
   newConnection = false;
-  unsigned long time = millis() + 3000;
+  unsigned long time = millis() + 5000;
   Serial.println(time);
   while ( millis() < time) {
     while (ble.available()) {
@@ -194,7 +181,7 @@ bool checkNewConnection() {
   formatBuff[i] = '\0';
   Serial.println(i);
   Serial.println(formatBuff);
-  int secourity = strcmp(formatBuff, secourityCode);
+  int secourity = 0;//strcmp(formatBuff, secourityCode);
   Serial.println("hereqwq qwd");
   if (secourity) {
     //wrong code = disconnect
@@ -213,13 +200,14 @@ bool checkNewConnection() {
 }
 
 void readData() {
-  if (ble.available() == 5) {  // if HM10 sends something then read
+  if (ble.available()) {  // if HM10 sends something then read
     int i = 5;
+    Serial.println("get");
     while (i--) {
       char ch = ble.read();
       frame[gotBytes++] = ch;
     }
-    //show();
+    show();
     message = true;
     gotBytes = 0;
   }
@@ -264,14 +252,10 @@ void setExecutionParameters() {
       speed += speedOffest;
       if (speed > maxSpeed)
         speed = maxSpeed;
-      drive_getSpeed(&signR, &signL);
-      drive_speed(sign(signR)*speed, sign(signL)*speed);
     } else if (command == slowDown) {
       speed -= speedOffest;
       if (speed < minSpeed)
         speed = minSpeed;
-      drive_getSpeed(&signR, &signL);
-      drive_speed(sign(signR)*speed, sign(signL)*speed);
     } else if (command == biggerTurnAngle) {
       turn += turnOffest;
       if (turn > maxTurn)
@@ -303,28 +287,26 @@ void setExecutionParameters() {
   } else { //executable commands
     Serial.println("executalebe");
     bool error = false;
-    drive_feedback(0);
-    drive_clearTicks();
     if (command == forward) {
       leftEnd = step;
       rightEnd = step;
-      drive_speed(speed, speed);
+      drive_speed(speed, speed, step);
     } else if (command == backward) {
       leftEnd = step;
       rightEnd = step;
-      drive_speed(-speed, -speed);
+      drive_speed(-speed, -speed, step);
     } else if (command == turnLeft) {
       leftEnd = turn;
       rightEnd = turn;
-      drive_speed(-speed, speed);
+      drive_speed(-speed, speed, turn);
     } else if (command == turnRight) {
       leftEnd = turn;
       rightEnd = turn;
-      drive_speed(speed, -speed);
+      drive_speed(speed, -speed, turn);
     } else if (command == turnAround) {
       leftEnd = halfTurn;
       rightEnd = halfTurn;
-      drive_speed(speed, -speed);
+      drive_speed(speed, -speed, halfTurn);
     } else {
       error = true;
     }
@@ -343,8 +325,10 @@ void setExecutionParameters() {
 }
 
 void checkIfExecuted() {
-  drive_getTicks(&left, &right);
-  if (abs(left) > leftEnd && abs(right) > rightEnd ) {
+  if (arlo.available()) {
+    char ch = ble.read();
+    if(ch == 'r')
+    Serial.println("OK");
     stop();
     setFrame(mobileRobot, command, commandId, messageId++, commandExecuted);
     ble.write(frame, 5);
@@ -355,6 +339,17 @@ void checkIfExecuted() {
     Serial.print("komenda wykonana, id: ");
     Serial.println(int(executionCommandId));
   }
+}
+
+void drive_speed(int left, int right, int endD){
+char sec = 184;
+arlo.write(sec);
+char cleft = 127 + left;
+arlo.write(cleft);
+char cright = 127 + right;
+arlo.write(cright);
+char cend = 200; //endD;
+arlo.write(cend);
 }
 
 void setFrame(int a, int b, int c, int d, int e) {

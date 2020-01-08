@@ -181,7 +181,7 @@ class Ui_RobotController(QObject):
             self.gesturesLabels.append(label_2)
             i += 1
 
-        self.pushButton_2.clicked.connect(self.send)
+        self.pushButton_2.clicked.connect(self.sendWrap)
         self.pushButton_5.clicked.connect(self.onNetwork)
 
         self.recognition = GestureRecognition(self.showFps)
@@ -241,6 +241,9 @@ class Ui_RobotController(QObject):
         else:
             self.commands.run()
 
+    def sendWrap(self):
+        self.send()
+
     def send(self, recognized=None):
         try:
             if not self.connectedToRobot:
@@ -258,8 +261,9 @@ class Ui_RobotController(QObject):
                 pass
             elif command == self.commands.commands.stopCommand:
                 self.emergencyStop()
-            elif command.value < self.commands.commands.speedUp and self.commands.watchDog:  # acvive command not settings
-                self.print("Cannot send command, one is already in execution: {}".format(self.commands.watchDog[0].command.name))
+            elif command.value < self.commands.commands.speedUp.value and self.commands.watchDog:  # acvive command not settings
+                self.print("Cannot send command, one is already in execution: {}".format(
+                    self.commands.watchDog[0].command.name))
             else:
                 self.commands.executeCommand(command)
         except Exception as e:

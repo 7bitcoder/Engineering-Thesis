@@ -116,7 +116,7 @@ class Commands(object):
         self.signals.print.emit(str)
 
     def gotData(self, data):
-        # print("got data" + str(data))
+        self.print("got data" + str(data))
         try:
             self.checkData(data)
         except Exception as e:
@@ -195,7 +195,7 @@ class BleComunicator(object):
     def __init__(self, fnct):
         self.connected = False
         self.address = "01:02:03:04:1A:DF"  ##bluetooth mac address
-        self.secourityCode = b'QV9GVE3SYFJ8768CCNL'
+        self.secourityCode = b'QV9'
         self.uartUUID = "0000ffe1-0000-1000-8000-00805f9b34fb"  ##transmision characteristic
         self.data = b''
         self.event = threading.Event()
@@ -224,7 +224,8 @@ class BleComunicator(object):
                 self.signals.lock.emit(1)
                 x = await client.is_connected()
                 self.print("Connected to mobile robot")
-                self.print(self.secourityCode)
+                #self.print(self.secourityCode)
+                await asyncio.sleep(1)
                 await client.write_gatt_char(self.uartUUID, self.secourityCode)
                 await client.start_notify(self.uartUUID, self.getData)
                 self.timer = threading.Timer(10, self.secourityCodeTimeUp)
