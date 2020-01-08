@@ -20,12 +20,12 @@ void myWait() {
 };
 
 void getData() {
-  xbee = fdserial_open(0, 1, 0, 9600);
+  xbee = fdserial_open(1,2, 0, 9600);
   //dprint(xbee, "Click this terminal, \n");
- // dprint(xbee, "and type on keyboard...\n\n");
+  //dprint(xbee, "and type on keyboard...\n\n");
   char c = 1;
   while(1){
-   // dprint(xbee, "begin\n"); 
+    //dprint(xbee, "begin\n"); 
     while(c != 184)
       c = fdserial_rxChar(xbee);
     myWait();
@@ -35,7 +35,7 @@ void getData() {
      emergency = 1;
      continue; 
     }      
-   // dprint(xbee, "You typed: %d %d %d\n", speedR, speedL, end);
+    //dprint(xbee, "You typed: %d %d %d\n", speedR, speedL, end);
     myWait();
     c = fdserial_rxChar(xbee);
     speedR = 127 - (int)c;

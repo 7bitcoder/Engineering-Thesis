@@ -5,15 +5,10 @@
 */
 #include "SoftwareSerial.h"
 
-SoftwareSerial ble(3, 4); // RX | TX
-SoftwareSerial arlo(5, 6); // RX | TX
-#define INTERRUPT 2
+SoftwareSerial arlo(4, 5); // RX | TX
 #define LOCKLED 12
-#define false 0
-#define true 1
 #define halfTurn 500
 
-typedef int bool;
 //napięcia na pinach 3.3V
 //command frame dates and meaining
 //byte 1: device
@@ -33,7 +28,7 @@ const char* secourityCode = "QV9";
 char messageId = 1;
 int gotBytes = 0;
 bool message = false;
-char frame[6] = {0};
+char frame[50] = {0};
 
 char deviceId;
 char messageIdExternal;
@@ -110,24 +105,11 @@ void checkIfExecuted();
 
 //help functions
 void setFrame(int a, int b, int c, int d, int e);
-int sign(int x) {
-  if (!x) //0
-    return 0;
-  else if (x > 0)
-    return 1;
-  else
-    return -1;
-}
-
-void interrupt() {
-  Serial.println("new Connection");
-  newConnection = true;
-}
-
 void show() {
-  sprintf(formatBuff, "Bajt1 = %d, Bajt2 = %d, Bajt3: = %d, Bajt4 = %d, Bajt5 = %d", int(frame[0]), int(frame[1]), int(frame[2]), int(frame[3]), int(frame[4]) );
+  sprintf(formatBuff, "%d,%d,%d,%d,%d", int(frame[0]), int(frame[1]), int(frame[2]), int(frame[3]), int(frame[4]) );
   Serial.println(formatBuff);
-  sprintf(formatBuff, "device = %d, commnad = %d, commandid = %d, messageid= %d, additional info= %d", deviceId, command, commandId, messageId, additionalInfo);
+  delay(500);
+  sprintf(formatBuff,  "%d,%d,%d,%d,%d", deviceId, command, commandId, messageId, additionalInfo);
   Serial.println(formatBuff);
 }
 unsigned long beg = 0;
@@ -136,26 +118,22 @@ void setup()
 {
   pinMode(LOCKLED, OUTPUT);
   digitalWrite(LOCKLED, LOW);
-  Serial.begin(115200);
+  Serial.begin(9600);
   Serial.println("Robot Started");
-  ble.begin(2400); // set HM10 serial at 9600 baud rate
   char c = '?';
-  //arlo.begin(9600);
-  while(c == '?')
+  arlo.begin(9600);
+  while(arlo.available() && c == '?')
     c = arlo.read();
-  Serial.println("yes started");
-  attachInterrupt(digitalPinToInterrupt(INTERRUPT), interrupt, RISING);
-}
-
-void loop()
-{
-  if (newConnection) { // new connection, check it!!
-    unlock = checkNewConnection();
+  delay(100);
+  unlock = checkNewConnection();
     if (unlock)
       digitalWrite(LOCKLED, LOW);
     else //if connection is wrong then set lock led
       digitalWrite(LOCKLED, HIGH);
-  }
+}
+
+void loop()
+{
   if (unlock) {
     readData();
     if (message)
@@ -167,47 +145,40 @@ void loop()
 }
 
 bool checkNewConnection() {
-  Serial.println("eg11111!!!!!!");
   int i = 0;
   newConnection = false;
   unsigned long time = millis() + 5000;
-  Serial.println(time);
   while ( millis() < time) {
-    while (ble.available()) {
-      formatBuff[i] = ble.read();
+    while (Serial.available()) {
+      formatBuff[i] = Serial.read();
       i++;
     }
   }
   formatBuff[i] = '\0';
-  Serial.println(i);
-  Serial.println(formatBuff);
   int secourity = 0;//strcmp(formatBuff, secourityCode);
-  Serial.println("hereqwq qwd");
   if (secourity) {
     //wrong code = disconnect
-    Serial.println("Access to robot denyed");
+    //Serial.println("Access to robot denyed");
     setFrame(mobileRobot, 1, 1, messageId++, accessDenyed);
-    strcpy(frame + 5, "Access denyed");
-    ble.write(frame);
+    strcpy(frame + 6, "Access denyed");
+    Serial.write(frame);
     return false;
   } else {
     setFrame(mobileRobot, 1, 1, messageId++, RobotReady);
-    ble.write(frame, 5);
-    Serial.println("Access to robot confirmed");
+    //Serial.println("Access to robot confirmed");
+    Serial.write(frame, 6); 
     return true;
   }
 
 }
 
 void readData() {
-  if (ble.available()) {  // if HM10 sends something then read
+  if (Serial.available() == 5) {  // if HM10 sends something then read
     int i = 5;
-    Serial.println("get");
     while (i--) {
-      char ch = ble.read();
+      char ch = Serial.read();
       frame[gotBytes++] = ch;
     }
-    show();
     message = true;
     gotBytes = 0;
   }
@@ -220,16 +191,16 @@ void drive_speed(int , int) {
 
 void checkData() {
   // check command
-  Serial.println("checking data");
   deviceId = frame[0];
   command = frame[1];
   commandId = frame[2];
   messageIdExternal = frame[3];
   additionalInfo = frame[4];
   message = false;
+  show();
+  delay(500);
   setExecutionParameters();
-  //show();
-  delay(100);
+  
 }
 
 void stop() {
@@ -239,13 +210,11 @@ void stop() {
 }
 
 void setExecutionParameters() {
-  Serial.println("exec params");
   if (command == def) { //def
     Serial.println("default");
     return;
   }
   if (command >= speedUp) { //controll setting commands executed instant
-    Serial.println("settings");
     int signR, signL;
     bool error = false;
     if (command == speedUp) {
@@ -277,15 +246,9 @@ void setExecutionParameters() {
     } else {
       error = true;
     }
-    Serial.println("sending");
     setFrame(mobileRobot, command, commandId, messageId++, error ? commandError : commandExecuted);
-    ble.write(frame, 5);
-    Serial.print("komenda: ");
-    Serial.println(int(command));
-    Serial.print("komenda nastawcza wykonana, id: ");
-    Serial.println(int(commandId));
+    Serial.write(frame, 6);
   } else { //executable commands
-    Serial.println("executalebe");
     bool error = false;
     if (command == forward) {
       leftEnd = step;
@@ -311,33 +274,22 @@ void setExecutionParameters() {
       error = true;
     }
     setFrame(mobileRobot, command, commandId, messageId++, error ? commandError : commandAccepted);
-    ble.write( frame, 5);
-    Serial.print(frame);
+    Serial.write( frame, 6);
     //show();
     state = commandExecution;
     executionCommand = command;
     executionCommandId = commandId;
-    Serial.print("komenda: ");
-    Serial.println(int(command));
-    Serial.print("komenda w trakcie wykonywania, id: ");
-    Serial.println(int(commandId));
   }
 }
 
 void checkIfExecuted() {
   if (arlo.available()) {
-    char ch = ble.read();
+    char ch = arlo.read();
     if(ch == 'r')
-    Serial.println("OK");
     stop();
     setFrame(mobileRobot, command, commandId, messageId++, commandExecuted);
-    ble.write(frame, 5);
-    Serial.print(frame);
+    Serial.write(frame, 6);
     //show();
-    Serial.print("komenda: ");
-    Serial.println(int(executionCommand));
-    Serial.print("komenda wykonana, id: ");
-    Serial.println(int(executionCommandId));
   }
 }
 
@@ -353,10 +305,11 @@ arlo.write(cend);
 }
 
 void setFrame(int a, int b, int c, int d, int e) {
-  frame[0] = a;
-  frame[1] = b;
-  frame[2] = c;
-  frame[3] = d;
-  frame[4] = e;
-  frame[5] = '\0';
+  frame[0] = 3;
+  frame[1] = a;
+  frame[2] = b;
+  frame[3] = c;
+  frame[4] = d;
+  frame[5] = e;
+  frame[6] = '\0';
 }

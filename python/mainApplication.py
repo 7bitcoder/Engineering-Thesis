@@ -8,7 +8,7 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from comunication import Commands
+from serialComunication import Commands
 from datetime import datetime
 from main import GestureRecognition
 from PyQt5.QtCore import *
