@@ -29,9 +29,19 @@ class Ui_RobotController(QObject):
         RobotController.resize(1400, 700)
 
         RobotController.emergency.connect(self.emergencyStop)
+        RobotController.network.connect(self.capture)
 
         self.centralwidget = QtWidgets.QWidget(RobotController)
         self.centralwidget.setObjectName("centralwidget")
+
+        self.pushButton_5 = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton_5.setGeometry(QtCore.QRect(900, 48, 80, 60))
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(15)
+        self.pushButton_5.setFont(font)
+        self.pushButton_5.setAcceptDrops(False)
+        self.pushButton_5.setObjectName("pushButton_5")
 
         self.pushButton_4 = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_4.setGeometry(QtCore.QRect(1200, 48, 80, 60))
@@ -68,15 +78,6 @@ class Ui_RobotController(QObject):
         self.pushButton_2.setFont(font)
         self.pushButton_2.setAcceptDrops(False)
         self.pushButton_2.setObjectName("pushButton_2")
-
-        self.pushButton_5 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_5.setGeometry(QtCore.QRect(900, 48, 80, 60))
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        font.setPointSize(15)
-        self.pushButton_5.setFont(font)
-        self.pushButton_5.setAcceptDrops(False)
-        self.pushButton_5.setObjectName("pushButton_5")
 
         self.textBrowser = QtWidgets.QTextBrowser(self.centralwidget)
         self.textBrowser.setGeometry(QtCore.QRect(50, 230, 500, 280))
@@ -254,17 +255,18 @@ class Ui_RobotController(QObject):
                 if self.comboBox.currentIndex() == 0:
                     pass
                 else:
-                    self.print(self.comboBox.currentData())
                     command = self.commands.commands(int(self.comboBox.currentData()))
                     self.comboBox.setCurrentIndex(0)
             if command == self.commands.commands.default:
                 pass
             elif command == self.commands.commands.stopCommand:
                 self.emergencyStop()
+                self.print("Emergency stop")
             elif command.value < self.commands.commands.speedUp.value and self.commands.watchDog:  # acvive command not settings
                 self.print("Cannot send command, one is already in execution: {}".format(
                     self.commands.watchDog[0].command.name))
             else:
+                self.print(command.name)
                 self.commands.executeCommand(command)
         except Exception as e:
             self.print(e)
@@ -297,10 +299,10 @@ class Ui_RobotController(QObject):
 
     def computeGesture(self, output):
         index = argmax(output).item() + 1  # label
-        if (not self.gesturesCapturing) or (not self.netowkrProcess) or index != self.lastCompute:
+        if (not self.gesturesCapturing) or index == 1 or (not self.netowkrProcess) or index != self.lastCompute:
             self.time = time()
             self.frames = 0
-        elif time() - self.time > 1 and self.frames > 15:
+        elif time() - self.time > 2 and self.frames > 15:
             command = self.commands.commands(index)
             self.print("Recognized: {}".format(command.name))
             self.send(command)
@@ -311,6 +313,7 @@ class Ui_RobotController(QObject):
 
 class MyWindow(QtWidgets.QMainWindow):
     emergency = pyqtSignal()
+    network = pyqtSignal()
 
     def __init__(self, parent=None):
         QtWidgets.QMainWindow.__init__(self, parent=parent)
@@ -319,6 +322,8 @@ class MyWindow(QtWidgets.QMainWindow):
         if type(event) == QtGui.QKeyEvent:
             if event.key() == QtCore.Qt.Key_Shift:
                 self.emergency.emit()
+            elif event.key() == QtCore.Qt.Key_Control:
+                self.network.emit()
 
 
 if __name__ == '__main__':

@@ -46,15 +46,19 @@ void getData() {
     //dprint(xbee, "You typed: %d %d %d\n", speedR, speedL, end);
     myWait();
     c = fdserial_rxChar(xbee);
-    end = 20 * (int)c;
+    end = 2 * (int)c;
     if(!end){
      emergency = 1;
      continue; 
     }
     //dprint(xbee, "You typed: %d %d %d\n", speedR, speedL, end);
     ready = 1;
-    while(ready)
-      ;
+    while(ready){
+        if(fdserial_rxReady(xbee) == 1){
+          c = fdserial_rxChar(xbee);
+          emergency = 1;
+        }                   
+    }      
     commandEnded = 0; 
     dprint(xbee, "r");        
   }  
@@ -83,7 +87,7 @@ int main()
     drive_speed(speedL, speedR);
     ticksR = 0;
     print("before3\n");                        // 20/127 of full power to motors
-    while(abs(ticksR) < end || emergency)
+    while(abs(ticksR) < end && !emergency)
       drive_getTicks(&ticksL, &ticksR);
     drive_speed(0,0);
     emergency = 0;

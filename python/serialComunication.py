@@ -103,7 +103,7 @@ class Commands(object):
     def executeCommand(self, command):
         data = bytearray(
             [self.deviceId.pc.value, command.value, self.commandId, self.messageId, self.additionalInfo.empty.value])
-        self.signals.print.emit(data)
+        #self.signals.print.emit(data)
         # self.print(str(data))
         self.watchDog.append(self.robotWatchDog(command, self.commandId, self, self.print))
         self.ble.setData(data)
@@ -118,7 +118,6 @@ class Commands(object):
         self.signals.print.emit(str)
 
     def gotData(self, data):
-        self.print("got data" + str(data))
         try:
             self.checkData(data)
         except Exception as e:
@@ -165,7 +164,7 @@ class Commands(object):
             self.print("None of watchdog commands found, error")
 
     def checkCommands(self, deviceId, command, commandId, messageId, additionalInfo):
-        if command == self.commands.stopCommand:
+        if command == self.commands.stopCommand and additionalInfo == self.additionalInfo.commandEnded:
             self.print("Stop command executed, robot has cancelled executing commands")
             for watchDog in self.watchDog:
                 watchDog.timer.cancel()
@@ -197,7 +196,7 @@ class SerialComunicator(object):
     def __init__(self, fnct):
         self.connected = False
         self.port = 'COM7'  ##port com
-        self.secourityCode = b'QV9'
+        self.secourityCode = b'QV9JKMNASKJNWKJSNKWJ'
         self.serial_port = serial.Serial()
         self.baud = 9600
         self.data = b''
@@ -212,7 +211,6 @@ class SerialComunicator(object):
 
     def setData(self, data):
         self.data = data
-        self.print(data)
         self.event.set()
 
     def disconnect(self):
@@ -223,9 +221,9 @@ class SerialComunicator(object):
         while not self.disc:
             data = self.serial_port.read(9999999999)
             if len(data) > 0:
-                print("raw Data: {}".format(data))
+                #print("raw Data: {}".format(data))
                 if data[0] == 3:
-                    print("command: {}".format(data[1:]))
+                    #print("command: {}".format(data[1:]))
                     self.onDataFunction(data[1:])
 
 

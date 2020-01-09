@@ -23,7 +23,7 @@ const char robotError = 5;
 const char RobotReady = 6;
 const char accessDenyed = 7;
 
-const char* secourityCode = "QV9";
+const char* secourityCode = "QV9JKMNASKJNWKJSNKWJ";
 //comunication data
 char messageId = 1;
 int gotBytes = 0;
@@ -139,7 +139,11 @@ void loop()
     if (message)
       checkData();
     if (state == commandExecution) {
-      checkIfExecuted();
+      if (arlo.available()) {
+        char ch = arlo.read();
+        setFrame(mobileRobot, command, commandId, messageId++, commandExecuted);
+        Serial.write(frame, 6);
+      }
     }
   }
 }
@@ -147,7 +151,7 @@ void loop()
 bool checkNewConnection() {
   int i = 0;
   newConnection = false;
-  unsigned long time = millis() + 5000;
+  unsigned long time = millis() + 1000;
   while ( millis() < time) {
     while (Serial.available()) {
       formatBuff[i] = Serial.read();
@@ -185,10 +189,6 @@ void readData() {
 
 }
 
-void drive_speed(int , int) {
-
-}
-
 void checkData() {
   // check command
   deviceId = frame[0];
@@ -197,15 +197,12 @@ void checkData() {
   messageIdExternal = frame[3];
   additionalInfo = frame[4];
   message = false;
-  show();
-  delay(500);
   setExecutionParameters();
   
 }
 
 void stop() {
-  Serial.println("stop");
-  drive_speed(0, 0);
+  drive_speed(0, 0, 0);
   state = waiting;
 }
 
@@ -214,7 +211,38 @@ void setExecutionParameters() {
     Serial.println("default");
     return;
   }
-  if (command >= speedUp) { //controll setting commands executed instant
+  if(command < speedUp){ //executable commands
+    bool error = false;
+    if (command == forward) {
+      leftEnd = step;
+      rightEnd = step;
+      drive_speed(speed, speed, step);
+    } else if (command == backward) {
+      leftEnd = step;
+      rightEnd = step;
+      drive_speed(-speed, -speed, step);
+    } else if (command == turnLeft) {
+      leftEnd = turn;
+      rightEnd = turn;
+      drive_speed(-speed, speed, turn);
+    } else if (command == turnRight) {
+      leftEnd = turn;
+      rightEnd = turn;
+      drive_speed(speed, -speed, turn);
+    } else if (command == turnAround) {
+      leftEnd = halfTurn;
+      rightEnd = halfTurn;
+      drive_speed(speed, -speed, halfTurn);
+    } else {
+      error = true;
+    }
+    setFrame(mobileRobot, command, commandId, messageId++, error ? commandError : commandAccepted);
+    Serial.write( frame, 6);
+    //show();
+    state = commandExecution;
+    executionCommand = command;
+    executionCommandId = commandId;
+  } else { //controll setting commands executed instant
     int signR, signL;
     bool error = false;
     if (command == speedUp) {
@@ -248,53 +276,16 @@ void setExecutionParameters() {
     }
     setFrame(mobileRobot, command, commandId, messageId++, error ? commandError : commandExecuted);
     Serial.write(frame, 6);
-  } else { //executable commands
-    bool error = false;
-    if (command == forward) {
-      leftEnd = step;
-      rightEnd = step;
-      drive_speed(speed, speed, step);
-    } else if (command == backward) {
-      leftEnd = step;
-      rightEnd = step;
-      drive_speed(-speed, -speed, step);
-    } else if (command == turnLeft) {
-      leftEnd = turn;
-      rightEnd = turn;
-      drive_speed(-speed, speed, turn);
-    } else if (command == turnRight) {
-      leftEnd = turn;
-      rightEnd = turn;
-      drive_speed(speed, -speed, turn);
-    } else if (command == turnAround) {
-      leftEnd = halfTurn;
-      rightEnd = halfTurn;
-      drive_speed(speed, -speed, halfTurn);
-    } else {
-      error = true;
-    }
-    setFrame(mobileRobot, command, commandId, messageId++, error ? commandError : commandAccepted);
-    Serial.write( frame, 6);
-    //show();
-    state = commandExecution;
-    executionCommand = command;
-    executionCommandId = commandId;
-  }
-}
-
-void checkIfExecuted() {
-  if (arlo.available()) {
-    char ch = arlo.read();
-    if(ch == 'r')
-    stop();
-    setFrame(mobileRobot, command, commandId, messageId++, commandExecuted);
-    Serial.write(frame, 6);
-    //show();
-  }
+  }  
 }
 
 void drive_speed(int left, int right, int endD){
 char sec = 184;
+if(!left){
+  char l = 1;
+  arlo.write(l);
+  return;
+}
 arlo.write(sec);
 char cleft = 127 + left;
 arlo.write(cleft);
