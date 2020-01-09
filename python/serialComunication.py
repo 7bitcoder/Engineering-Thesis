@@ -221,7 +221,7 @@ class SerialComunicator(object):
         while not self.disc:
             data = self.serial_port.read(9999999999)
             if len(data) > 0:
-                #print("raw Data: {}".format(data))
+                print("raw Data: {}".format(data))
                 if data[0] == 3:
                     #print("command: {}".format(data[1:]))
                     self.onDataFunction(data[1:])

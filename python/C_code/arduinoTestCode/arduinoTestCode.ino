@@ -159,8 +159,9 @@ bool checkNewConnection() {
     }
   }
   formatBuff[i] = '\0';
-  int secourity = 0;//strcmp(formatBuff, secourityCode);
+  int secourity = strcmp(formatBuff, secourityCode);
   if (secourity) {
+    Serial.print(formatBuff);
     //wrong code = disconnect
     //Serial.println("Access to robot denyed");
     setFrame(mobileRobot, 1, 1, messageId++, accessDenyed);
