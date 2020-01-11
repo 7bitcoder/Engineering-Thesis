@@ -4,6 +4,11 @@
     <list default="true" id="615a3f95-0aa8-4c67-870f-1878902a0950" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/C_code/arduinoTestCode/arduinoTestCode.ino" beforeDir="false" afterPath="$PROJECT_DIR$/C_code/arduinoTestCode/arduinoTestCode.ino" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/C_code/arlo2.0.binary" beforeDir="false" afterPath="$PROJECT_DIR$/C_code/arlo2.0.binary" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/C_code/arlo2.0.c" beforeDir="false" afterPath="$PROJECT_DIR$/C_code/arlo2.0.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/C_code/arlo2.0.elf" beforeDir="false" afterPath="$PROJECT_DIR$/C_code/arlo2.0.elf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/C_code/cmm/arlo2.0.binary" beforeDir="false" afterPath="$PROJECT_DIR$/C_code/cmm/arlo2.0.binary" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/C_code/cmm/arlo2.0.elf" beforeDir="false" afterPath="$PROJECT_DIR$/C_code/cmm/arlo2.0.elf" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/openCvTranforms/opencv_transforms/transforms.py" beforeDir="false" afterPath="$PROJECT_DIR$/openCvTranforms/opencv_transforms/transforms.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/serialComunication.py" beforeDir="false" afterPath="$PROJECT_DIR$/serialComunication.py" afterDir="false" />
     </list>
@@ -188,46 +193,46 @@
     </option>
   </component>
   <component name="WindowStateProjectService">
-    <state width="1515" height="213" key="GridCell.Tab.0.bottom" timestamp="1578599406977">
+    <state width="1515" height="215" key="GridCell.Tab.0.bottom" timestamp="1578764965800">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1515" height="213" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1578599406977" />
-    <state width="1515" height="213" key="GridCell.Tab.0.center" timestamp="1578599406977">
+    <state width="1515" height="215" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1578764965800" />
+    <state width="1515" height="215" key="GridCell.Tab.0.center" timestamp="1578764965800">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1515" height="213" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1578599406977" />
-    <state width="1515" height="213" key="GridCell.Tab.0.left" timestamp="1578599406976">
+    <state width="1515" height="215" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1578764965800" />
+    <state width="1515" height="215" key="GridCell.Tab.0.left" timestamp="1578764965800">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1515" height="213" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1578599406976" />
-    <state width="1515" height="213" key="GridCell.Tab.0.right" timestamp="1578599406977">
+    <state width="1515" height="215" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1578764965800" />
+    <state width="1515" height="215" key="GridCell.Tab.0.right" timestamp="1578764965800">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1515" height="213" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1578599406977" />
-    <state width="1515" height="215" key="GridCell.Tab.1.bottom" timestamp="1578598066997">
+    <state width="1515" height="215" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1578764965800" />
+    <state width="1515" height="215" key="GridCell.Tab.1.bottom" timestamp="1578764965800">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1515" height="215" key="GridCell.Tab.1.bottom/0.0.1536.824@0.0.1536.824" timestamp="1578598066997" />
-    <state width="1515" height="215" key="GridCell.Tab.1.center" timestamp="1578598066997">
+    <state width="1515" height="215" key="GridCell.Tab.1.bottom/0.0.1536.824@0.0.1536.824" timestamp="1578764965800" />
+    <state width="1515" height="215" key="GridCell.Tab.1.center" timestamp="1578764965800">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1515" height="215" key="GridCell.Tab.1.center/0.0.1536.824@0.0.1536.824" timestamp="1578598066997" />
-    <state width="1515" height="215" key="GridCell.Tab.1.left" timestamp="1578598066997">
+    <state width="1515" height="215" key="GridCell.Tab.1.center/0.0.1536.824@0.0.1536.824" timestamp="1578764965800" />
+    <state width="1515" height="215" key="GridCell.Tab.1.left" timestamp="1578764965800">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1515" height="215" key="GridCell.Tab.1.left/0.0.1536.824@0.0.1536.824" timestamp="1578598066997" />
-    <state width="1515" height="215" key="GridCell.Tab.1.right" timestamp="1578598066997">
+    <state width="1515" height="215" key="GridCell.Tab.1.left/0.0.1536.824@0.0.1536.824" timestamp="1578764965800" />
+    <state width="1515" height="215" key="GridCell.Tab.1.right" timestamp="1578764965800">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1515" height="215" key="GridCell.Tab.1.right/0.0.1536.824@0.0.1536.824" timestamp="1578598066997" />
+    <state width="1515" height="215" key="GridCell.Tab.1.right/0.0.1536.824@0.0.1536.824" timestamp="1578764965800" />
     <state x="277" y="55" key="SettingsEditor" timestamp="1577896183879">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="277" y="55" key="SettingsEditor/0.0.1536.824@0.0.1536.824" timestamp="1577896183879" />
-    <state x="341" y="149" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1578227228017">
+    <state x="341" y="149" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1578760978863">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="341" y="149" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.0.1536.824@0.0.1536.824" timestamp="1578227228017" />
+    <state x="341" y="149" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.0.1536.824@0.0.1536.824" timestamp="1578760978863" />
     <state x="431" y="145" width="672" height="678" key="search.everywhere.popup" timestamp="1578258534747">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
@@ -302,13 +307,6 @@
           <option name="timeStamp" value="87" />
         </line-breakpoint>
       </breakpoints>
-      <default-breakpoints>
-        <breakpoint type="python-exception">
-          <properties notifyOnTerminate="true" exception="BaseException">
-            <option name="notifyOnTerminate" value="true" />
-          </properties>
-        </breakpoint>
-      </default-breakpoints>
     </breakpoint-manager>
     <watches-manager>
       <configuration name="PythonConfigurationType">

@@ -26,6 +26,7 @@ void getData() {
   char c = 1;
   while(1){
     //dprint(xbee, "begin\n"); 
+    //freqout(4, 500, 2000);  
     while(c != 184)
       c = fdserial_rxChar(xbee);
     myWait();
@@ -46,7 +47,7 @@ void getData() {
     //dprint(xbee, "You typed: %d %d %d\n", speedR, speedL, end);
     myWait();
     c = fdserial_rxChar(xbee);
-    end = 2 * (int)c;
+    end = 4 * (int)c;
     if(!end){
      emergency = 1;
      continue; 
@@ -60,7 +61,9 @@ void getData() {
         }                   
     }      
     commandEnded = 0; 
+    //freqout(4, 500, 3000);  
     dprint(xbee, "r");        
+    //freqout(4, 500, 3000);  
   }  
 }
 
@@ -68,8 +71,8 @@ int main()
 {
   int ticksL = 0;
   int ticksR = 0; 
-  freqout(2, 2000, 3000);   
-  print("starting\n");
+  freqout(4, 500, 2000);   
+  //print("starting\n");
   cog_run(getData, 128);  
   
 
@@ -78,20 +81,21 @@ int main()
  
   while(1)
   {
-    print("before\n");
+    //print("before\n");
     while(!ready)
       ;
-      
-    print("before2\n");
+    freqout(4, 500, 3000);
+    //print("before2\n");
     drive_clearTicks();
     drive_speed(speedL, speedR);
     ticksR = 0;
-    print("before3\n");                        // 20/127 of full power to motors
+    //print("before3\n");                        // 20/127 of full power to motors
     while(abs(ticksR) < end && !emergency)
       drive_getTicks(&ticksL, &ticksR);
     drive_speed(0,0);
     emergency = 0;
     ready = 0;
-    print("before4\n");
+    freqout(4, 500, 3000);
+    //print("before4\n");
   }  
 }

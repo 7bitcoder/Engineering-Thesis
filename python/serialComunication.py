@@ -195,11 +195,13 @@ class SerialComunicator(object):
 
     def __init__(self, fnct):
         self.connected = False
-        self.port = 'COM7'  ##port com
+        self.nmb = 9
+        self.port = 'COM{}'.format(self.nmb)  ##port com
         self.secourityCode = b'QV9JKMNASKJNWKJSNKWJ'
         self.serial_port = serial.Serial()
         self.baud = 9600
         self.data = b''
+        self.gotData = b''
         self.event = threading.Event()
         self.onDataFunction = fnct
         self.disc = False
@@ -222,10 +224,19 @@ class SerialComunicator(object):
             data = self.serial_port.read(9999999999)
             if len(data) > 0:
                 print("raw Data: {}".format(data))
+                if self.gotData:
+                    self.gotData += data
+                    if len(self.gotData) == 5:
+                        self.onDataFunction(self.gotData)
+                        self.gotData = b''
                 if data[0] == 3:
-                    #print("command: {}".format(data[1:]))
-                    self.onDataFunction(data[1:])
-
+                    data = data[1:]
+                    if len(data) != 5:
+                        self.gotData = data
+                    else:
+                        #print("command: {}".format(data[1:]))
+                        self.onDataFunction(data)
+                        self.gotData = b''
 
     async def run(self, loop):
         self.print("Running communicator interface")

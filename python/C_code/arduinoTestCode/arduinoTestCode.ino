@@ -7,7 +7,7 @@
 
 SoftwareSerial arlo(4, 5); // RX | TX
 #define LOCKLED 12
-#define halfTurn 500
+#define halfTurn 44
 
 //napięcia na pinach 3.3V
 //command frame dates and meaining
@@ -75,17 +75,17 @@ char formatBuff[30];
 
 //changing steps with settings
 const int turnOffest = halfTurn / (2 * 5); //18 deg
-const int speedOffest = 127 / 8; //max 127
-const int stepOffest = 80;
+const int speedOffest = 127 / 10; //max 127
+const int stepOffest = halfTurn/4;
 
 const int minSpeed = 10;
 const int maxSpeed = 120;
-const int maxStep = 800;
-const int minStep = 50;
+const int maxStep = 255;
+const int minStep = 10;
 const int maxTurn = halfTurn; //180 deg
 const int minTurn = halfTurn / 18; //10 deg
 //default
-int step = halfTurn;
+int step = halfTurn/2;
 int speed = 50;
 int turn = halfTurn / 4;
 
@@ -217,19 +217,19 @@ void setExecutionParameters() {
     if (command == forward) {
       leftEnd = step;
       rightEnd = step;
-      drive_speed(speed, speed, step);
+      drive_speed(-speed, -speed, step);
     } else if (command == backward) {
       leftEnd = step;
       rightEnd = step;
-      drive_speed(-speed, -speed, step);
+      drive_speed(speed, speed, step);
     } else if (command == turnLeft) {
       leftEnd = turn;
       rightEnd = turn;
-      drive_speed(-speed, speed, turn);
+      drive_speed(speed, -speed, turn);
     } else if (command == turnRight) {
       leftEnd = turn;
       rightEnd = turn;
-      drive_speed(speed, -speed, turn);
+      drive_speed(-speed, speed, turn);
     } else if (command == turnAround) {
       leftEnd = halfTurn;
       rightEnd = halfTurn;
@@ -292,7 +292,7 @@ char cleft = 127 + left;
 arlo.write(cleft);
 char cright = 127 + right;
 arlo.write(cright);
-char cend = 200; //endD;
+char cend = endD;
 arlo.write(cend);
 }
 
