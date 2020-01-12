@@ -36,9 +36,34 @@ This section should list any major frameworks that you built your project using.
 <!-- USAGE EXAMPLES -->
 ## Usage
 Gui interface: </br>
-![gui](Rysunki/gui2.png)
+![gui](Rysunki/gui2.png) </br>
+1. Manual command list,
+2. Send manual chosen command, 
+3. Command window, contains information about, gestures captured, execution command status etc.,
+4. Frames per second,
+5. On/Off neural network processing,
+6. On/Off automatic gesture detection. If gesture is detected for more than 2s script automatic sends command to Arlo. Can be also activated via Ctrl.
+7. Connect/Disconnect,
+8. Emergency stop, cancels all commands actual beeing in execution. Can be also activates via Shift 
+9. Commands and probability of ocurance in actual dataframe
+10. Dataframe preview in 640x480 resolution, grey area is ignored in gesture detection process.
 ![gesty](Rysunki/schematGestów.png)
-![gesty](Rysunki/gestStopu.png)
+![gesty](Rysunki/gestStopu.png) </br>
+Controlling commands: </br>
+1. Default
+2. Turn left  
+3. Turn right 
+4. Turn around 
+5. Forward
+6. Backward 
+Setting commands: </br>
+7. Speed up  
+8. Slow down 
+9. Bigger turn angle
+10. Smaller turn angle 
+11. Bigger step 
+12. Smaller step 
+13. Emergency Stop
 
 
 
