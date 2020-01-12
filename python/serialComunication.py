@@ -195,7 +195,7 @@ class SerialComunicator(object):
 
     def __init__(self, fnct):
         self.connected = False
-        self.nmb = 9
+        self.nmb = 7
         self.port = 'COM{}'.format(self.nmb)  ##port com
         self.secourityCode = b'QV9JKMNASKJNWKJSNKWJ'
         self.serial_port = serial.Serial()
