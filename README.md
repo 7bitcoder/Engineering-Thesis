@@ -35,6 +35,8 @@ This section should list any major frameworks that you built your project using.
 
 <!-- USAGE EXAMPLES -->
 ## Usage
+### mobile robot Arlo
+![arlo](https://www.parallax.com/sites/default/files/styles/full-size-product/public/28966a.png?itok=zbmm3WLV)
 ### Gui interface: </br>
 ![gui](Rysunki/gui2.png) </br>
 1. Manual command list,
@@ -46,7 +48,7 @@ This section should list any major frameworks that you built your project using.
 7. Connect/Disconnect,
 8. Emergency stop, cancels all commands actual beeing in execution. Can be also activates via Shift 
 9. Commands and probability of ocurance in actual dataframe
-10. Dataframe preview in 640x480 resolution, grey area is ignored in gesture detection process. </br>
+10. Dataframe preview in 640x480 resolution, grey area is ignored in gesture detection process. </br> </br>
 ![gesty](Rysunki/schematGestów.png)
 ![gesty](Rysunki/gestStopu.png) </br>
 ### Controlling commands: </br>
