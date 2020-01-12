@@ -35,6 +35,10 @@ This section should list any major frameworks that you built your project using.
 
 <!-- USAGE EXAMPLES -->
 ## Usage
+Gui interface: </br>
+![gui](Rysunki/gui2.png)
+![gesty](Rysunki/schematGestów.png)
+![gesty](Rysunki/gestStopu.png)
 
 
 
