@@ -299,10 +299,13 @@ class Ui_RobotController(QObject):
 
     def computeGesture(self, output):
         index = argmax(output).item() + 1  # label
+        endTime = 2
+        if index == 13:#stop command
+            endTime = 0.3
         if (not self.gesturesCapturing) or index == 1 or (not self.netowkrProcess) or index != self.lastCompute:
             self.time = time()
             self.frames = 0
-        elif time() - self.time > 2 and self.frames > 15:
+        elif time() - self.time > endTime and self.frames > 15:
             command = self.commands.commands(index)
             self.print("Recognized: {}".format(command.name))
             self.send(command)

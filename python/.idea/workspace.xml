@@ -2,15 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="615a3f95-0aa8-4c67-870f-1878902a0950" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/C_code/arduinoTestCode/arduinoTestCode.ino" beforeDir="false" afterPath="$PROJECT_DIR$/C_code/arduinoTestCode/arduinoTestCode.ino" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/C_code/arlo2.0.binary" beforeDir="false" afterPath="$PROJECT_DIR$/C_code/arlo2.0.binary" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/C_code/arlo2.0.c" beforeDir="false" afterPath="$PROJECT_DIR$/C_code/arlo2.0.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/C_code/arlo2.0.elf" beforeDir="false" afterPath="$PROJECT_DIR$/C_code/arlo2.0.elf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/C_code/cmm/arlo2.0.binary" beforeDir="false" afterPath="$PROJECT_DIR$/C_code/cmm/arlo2.0.binary" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/C_code/cmm/arlo2.0.elf" beforeDir="false" afterPath="$PROJECT_DIR$/C_code/cmm/arlo2.0.elf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mainApplication.py" beforeDir="false" afterPath="$PROJECT_DIR$/mainApplication.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/openCvTranforms/opencv_transforms/transforms.py" beforeDir="false" afterPath="$PROJECT_DIR$/openCvTranforms/opencv_transforms/transforms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/serialComunication.py" beforeDir="false" afterPath="$PROJECT_DIR$/serialComunication.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
