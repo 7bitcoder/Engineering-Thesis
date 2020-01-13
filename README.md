@@ -12,7 +12,7 @@
 The purpose of this project was to build a system that allows user to control the Arlo mobile robot using static hand gestures, with use of camera. The project consists of three parts, the first was to develop script that supposed to recognize the gestures controlling the robot. For this purpose author used convolutional neural network, which had to be properly trained. The next step was to create a robot program that had to properly react to application commands. The last step was to handle communication between programs, Bluetooth 4.0 Low Energy standard was used for this purpose. Unfortunately, during the final control test Bluetooth module has been damaged, in this case the author decided to use simple serial communication instead. The main assumptions of the project were to achieve real-time processing system and achieve high accuracy of hand gesture recognition. </br>
 Arlo: https://www.parallax.com/product/arlo-robotic-platform-system </br>
 
-![](https://media.giphy.com/media/jrzD9fFCEqIiZxnnoM/giphy.gif)
+![Alt Text](https://media.giphy.com/media/LNkTEJLvYglDymOG1S/giphy.gif)
 
 Full video: https://www.youtube.com/watch?v=j6qOpACT1z0 </br>
 ### Built With
@@ -34,7 +34,7 @@ This section should list any major frameworks that you built your project using.
 
 
 <!-- USAGE EXAMPLES -->
-## Usage
+## Description
 ### mobile robot Arlo
 ![arlo](https://www.parallax.com/sites/default/files/styles/full-size-product/public/28966a.png?itok=zbmm3WLV)
 ### Gui interface: </br>
