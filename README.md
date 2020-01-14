@@ -16,7 +16,6 @@ Arlo: https://www.parallax.com/product/arlo-robotic-platform-system </br>
 
 Full video: https://www.youtube.com/watch?v=j6qOpACT1z0 </br>
 ### Built With
-This section should list any major frameworks that you built your project using. Leave any add-ons/plugins for the acknowledgements section. Here are a few examples.
 * [Pytorch](https://pytorch.org/)
 * [PyQt](https://python101.readthedocs.io/pl/latest/pyqt/)
 * [Parallax](https://www.parallax.com/product/28966)
@@ -44,9 +43,9 @@ This section should list any major frameworks that you built your project using.
 3. Command window, contains information about, gestures captured, execution command status etc.,
 4. Frames per second,
 5. On/Off neural network processing,
-6. On/Off automatic gesture detection. If gesture is detected for more than 2s script automatic sends command to Arlo. Can be also activated via Ctrl.
+6. On/Off automatic gesture detection. If gesture is detected for more than 2s script automatically sends command to Arlo. Can be also activated via Ctrl.
 7. Connect/Disconnect,
-8. Emergency stop, cancels all commands actual beeing in execution. Can be also activates via Shift 
+8. Emergency stop, cancels all commands actual beeing in execution. Can be also activated via Shift 
 9. Commands and probability of ocurance in actual dataframe
 10. Dataframe preview in 640x480 resolution, grey area is ignored in gesture detection process. </br> </br>
 ![gesty](Rysunki/schematGestów.png)
@@ -67,9 +66,6 @@ This section should list any major frameworks that you built your project using.
 12. Smaller step 
 13. Emergency Stop
 
-
-
-<!-- LICENSE -->
 ## License
 
 Distributed under the MIT License. See `LICENSE` for more information.
@@ -78,7 +74,8 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ## Author
 
-Sylwester Dawida Poland AGH
+Sylwester Dawida </br>
+Poland, AGH </br>
 2020
 
 
