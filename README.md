@@ -22,7 +22,10 @@ Full video: https://www.youtube.com/watch?v=j6qOpACT1z0 </br>
 * [Bleak](https://github.com/hbldh/bleak)
 * [PySerial](https://github.com/pyserial/pyserial)
 * [OpenCv](https://pypi.org/project/opencv-python/)
-
+### Requerements
+1. Mobile Robot arlo
+2. Bluetooth 4.0 Le module
+3. Laptop with bluetooth communication enabled
 ### Installation
 
 1. Clone the repo
